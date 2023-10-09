@@ -1,2 +1,1 @@
-# finance_tracker
-Personal Finance Tracker 
+# Personal Finance Tracker 
