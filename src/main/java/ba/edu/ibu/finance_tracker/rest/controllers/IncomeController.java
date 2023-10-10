@@ -36,7 +36,7 @@ public class IncomeController {
         return incomeService.updateIncomeAmount(id, newAmount);
     }
 
-    @GetMapping("income/{userId}")
+    @GetMapping("user/{userId}")
     public List<Income> getAllIncomesByUserId(String userId) {
         return incomeService.getAllIncomesByUserId(userId);
     }
