@@ -2,7 +2,6 @@ package ba.edu.ibu.finance_tracker.rest.service;
 
 import ba.edu.ibu.finance_tracker.rest.model.User;
 import ba.edu.ibu.finance_tracker.rest.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,7 +11,6 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    @Autowired
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -27,5 +25,19 @@ public class UserService {
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    public User updateUserEmail(String id, String newEmail) {
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("Email not found"));
+
+        user.setEmail(newEmail);
+        return userRepository.save(user);
+    }
+
+    public User updateUserPassword(String id, String newPassword) {
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setPassword(newPassword);
+        return userRepository.save(user);
     }
 }
