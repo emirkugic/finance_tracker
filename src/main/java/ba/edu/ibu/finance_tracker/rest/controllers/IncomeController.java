@@ -2,12 +2,7 @@ package ba.edu.ibu.finance_tracker.rest.controllers;
 
 import java.util.List;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import ba.edu.ibu.finance_tracker.rest.model.Income;
 import ba.edu.ibu.finance_tracker.rest.service.IncomeService;
@@ -22,22 +17,22 @@ public class IncomeController {
     }
 
     @PostMapping
-    public Income createIncome(Income income) {
+    public Income createIncome(@RequestBody Income income) {
         return incomeService.createIncome(income);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteIncome(String id) {
+    public void deleteIncome(@PathVariable String id) {
         incomeService.deleteIncome(id);
     }
 
-    @PutMapping
-    public Income updateIncomeAmount(String id, double newAmount) {
+    @PutMapping("/{id}")
+    public Income updateIncomeAmount(@PathVariable String id, @RequestBody double newAmount) {
         return incomeService.updateIncomeAmount(id, newAmount);
     }
 
-    @GetMapping("user/{userId}")
-    public List<Income> getAllIncomesByUserId(String userId) {
+    @GetMapping("/user/{userId}")
+    public List<Income> getAllIncomesByUserId(@PathVariable String userId) {
         return incomeService.getAllIncomesByUserId(userId);
     }
 
