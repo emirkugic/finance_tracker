@@ -1,5 +1,7 @@
 package ba.edu.ibu.finance_tracker.core.model;
 
+import java.time.LocalDateTime;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -10,7 +12,7 @@ public class Expense {
     private String id;
     private String userId;
     private double amount;
-    private String spentOn;
+    private LocalDateTime expenseDate;
     private String category;
     private String source;
 
@@ -38,14 +40,6 @@ public class Expense {
         this.amount = amount;
     }
 
-    public String getSpentOn() {
-        return spentOn;
-    }
-
-    public void setSpentOn(String spentOn) {
-        this.spentOn = spentOn;
-    }
-
     public String getCategory() {
         return category;
     }
@@ -60,6 +54,14 @@ public class Expense {
 
     public void setSource(String source) {
         this.source = source;
+    }
+
+    public LocalDateTime getExpenseDate() {
+        return expenseDate;
+    }
+
+    public void setSpentDate(LocalDateTime expenseDate) {
+        this.expenseDate = expenseDate;
     }
 
 }

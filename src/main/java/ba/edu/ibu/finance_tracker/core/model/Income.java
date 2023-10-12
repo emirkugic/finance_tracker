@@ -1,5 +1,7 @@
 package ba.edu.ibu.finance_tracker.core.model;
 
+import java.time.LocalDateTime;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -11,7 +13,7 @@ public class Income {
     private String userId;
     private double amount;
     private String source;
-    private String receivedDate;
+    private LocalDateTime receivedDate;
     private String receivedThrough;
     private String from;
 
@@ -47,11 +49,11 @@ public class Income {
         this.source = source;
     }
 
-    public String getReceivedDate() {
+    public LocalDateTime getReceivedDate() {
         return receivedDate;
     }
 
-    public void setReceivedDate(String receivedDate) {
+    public void setReceivedDate(LocalDateTime receivedDate) {
         this.receivedDate = receivedDate;
     }
 
