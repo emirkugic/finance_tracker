@@ -2,8 +2,9 @@ package ba.edu.ibu.finance_tracker.rest.controllers;
 
 import java.util.List;
 import org.springframework.web.bind.annotation.*;
-import ba.edu.ibu.finance_tracker.rest.model.CreditCard;
-import ba.edu.ibu.finance_tracker.rest.service.CreditCardService;
+
+import ba.edu.ibu.finance_tracker.core.model.CreditCard;
+import ba.edu.ibu.finance_tracker.core.service.CreditCardService;
 
 @RestController
 @RequestMapping("/api/credit-cards")

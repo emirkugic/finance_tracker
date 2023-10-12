@@ -1,11 +1,11 @@
-package ba.edu.ibu.finance_tracker.rest.service;
+package ba.edu.ibu.finance_tracker.core.service;
 
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import ba.edu.ibu.finance_tracker.rest.model.RepeatingExpense;
-import ba.edu.ibu.finance_tracker.rest.repository.RepeatingExpenseRepository;
+import ba.edu.ibu.finance_tracker.core.model.RepeatingExpense;
+import ba.edu.ibu.finance_tracker.core.repository.RepeatingExpenseRepository;
 
 @Service
 public class RepeatingExpenseService {

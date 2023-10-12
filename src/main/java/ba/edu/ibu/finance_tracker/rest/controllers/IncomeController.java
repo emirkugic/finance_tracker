@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.*;
 
-import ba.edu.ibu.finance_tracker.rest.model.Income;
-import ba.edu.ibu.finance_tracker.rest.service.IncomeService;
+import ba.edu.ibu.finance_tracker.core.model.Income;
+import ba.edu.ibu.finance_tracker.core.service.IncomeService;
 
 @RestController
 @RequestMapping("/api/incomes")

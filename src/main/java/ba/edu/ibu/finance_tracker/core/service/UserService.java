@@ -1,7 +1,8 @@
-package ba.edu.ibu.finance_tracker.rest.service;
+package ba.edu.ibu.finance_tracker.core.service;
 
-import ba.edu.ibu.finance_tracker.rest.model.User;
-import ba.edu.ibu.finance_tracker.rest.repository.UserRepository;
+import ba.edu.ibu.finance_tracker.core.model.User;
+import ba.edu.ibu.finance_tracker.core.repository.UserRepository;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;

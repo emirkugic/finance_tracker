@@ -1,18 +1,17 @@
-package ba.edu.ibu.finance_tracker.rest.model;
+package ba.edu.ibu.finance_tracker.core.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
-public class Expense {
+public class RepeatingExpense {
 
     @Id
     private String id;
     private String userId;
     private double amount;
-    private String spentOn;
     private String category;
-    private String source;
+    private String dueDate;
 
     public String getId() {
         return id;
@@ -38,14 +37,6 @@ public class Expense {
         this.amount = amount;
     }
 
-    public String getSpentOn() {
-        return spentOn;
-    }
-
-    public void setSpentOn(String spentOn) {
-        this.spentOn = spentOn;
-    }
-
     public String getCategory() {
         return category;
     }
@@ -54,12 +45,12 @@ public class Expense {
         this.category = category;
     }
 
-    public String getSource() {
-        return source;
+    public String getDueDate() {
+        return dueDate;
     }
 
-    public void setSource(String source) {
-        this.source = source;
+    public void setDueDate(String dueDate) {
+        this.dueDate = dueDate;
     }
 
 }

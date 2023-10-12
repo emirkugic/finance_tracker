@@ -1,9 +1,10 @@
-package ba.edu.ibu.finance_tracker.rest.repository;
+package ba.edu.ibu.finance_tracker.core.repository;
 
 import java.util.List;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
-import ba.edu.ibu.finance_tracker.rest.model.Income;
+
+import ba.edu.ibu.finance_tracker.core.model.Income;
 
 public interface IncomeRepository extends MongoRepository<Income, String> {
 

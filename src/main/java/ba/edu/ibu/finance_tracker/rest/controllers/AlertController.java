@@ -1,8 +1,9 @@
 package ba.edu.ibu.finance_tracker.rest.controllers;
 
 import org.springframework.web.bind.annotation.*;
-import ba.edu.ibu.finance_tracker.rest.model.Alert;
-import ba.edu.ibu.finance_tracker.rest.service.AlertService;
+
+import ba.edu.ibu.finance_tracker.core.model.Alert;
+import ba.edu.ibu.finance_tracker.core.service.AlertService;
 
 import java.util.List;
 

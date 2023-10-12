@@ -1,9 +1,10 @@
-package ba.edu.ibu.finance_tracker.rest.service;
+package ba.edu.ibu.finance_tracker.core.service;
 
 import java.util.List;
 import org.springframework.stereotype.Service;
-import ba.edu.ibu.finance_tracker.rest.model.Income;
-import ba.edu.ibu.finance_tracker.rest.repository.IncomeRepository;
+
+import ba.edu.ibu.finance_tracker.core.model.Income;
+import ba.edu.ibu.finance_tracker.core.repository.IncomeRepository;
 
 @Service
 public class IncomeService {

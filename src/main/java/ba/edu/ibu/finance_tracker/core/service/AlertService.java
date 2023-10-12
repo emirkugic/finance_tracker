@@ -1,10 +1,12 @@
-package ba.edu.ibu.finance_tracker.rest.service;
+package ba.edu.ibu.finance_tracker.core.service;
 
-import org.springframework.stereotype.Service;
-import ba.edu.ibu.finance_tracker.rest.model.Alert;
-import ba.edu.ibu.finance_tracker.rest.repository.AlertRepository;
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
+import ba.edu.ibu.finance_tracker.core.model.Alert;
+import ba.edu.ibu.finance_tracker.core.repository.AlertRepository;
 
 @Service
 public class AlertService {

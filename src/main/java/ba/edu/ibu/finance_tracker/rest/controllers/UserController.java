@@ -1,7 +1,8 @@
 package ba.edu.ibu.finance_tracker.rest.controllers;
 
-import ba.edu.ibu.finance_tracker.rest.model.User;
-import ba.edu.ibu.finance_tracker.rest.service.UserService;
+import ba.edu.ibu.finance_tracker.core.model.User;
+import ba.edu.ibu.finance_tracker.core.service.UserService;
+
 import org.springframework.web.bind.annotation.RequestBody;
 import java.util.List;
 import org.springframework.web.bind.annotation.DeleteMapping;

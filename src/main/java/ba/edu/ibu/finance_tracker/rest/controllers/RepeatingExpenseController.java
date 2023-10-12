@@ -3,8 +3,8 @@ package ba.edu.ibu.finance_tracker.rest.controllers;
 import java.util.List;
 import org.springframework.web.bind.annotation.*;
 
-import ba.edu.ibu.finance_tracker.rest.model.RepeatingExpense;
-import ba.edu.ibu.finance_tracker.rest.service.RepeatingExpenseService;
+import ba.edu.ibu.finance_tracker.core.model.RepeatingExpense;
+import ba.edu.ibu.finance_tracker.core.service.RepeatingExpenseService;
 
 @RestController
 @RequestMapping("/api/repeating-expenses")

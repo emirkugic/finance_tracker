@@ -1,4 +1,4 @@
-package ba.edu.ibu.finance_tracker.rest.model;
+package ba.edu.ibu.finance_tracker.core.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;

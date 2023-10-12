@@ -10,8 +10,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ba.edu.ibu.finance_tracker.rest.model.Expense;
-import ba.edu.ibu.finance_tracker.rest.service.ExpenseService;
+
+import ba.edu.ibu.finance_tracker.core.model.Expense;
+import ba.edu.ibu.finance_tracker.core.service.ExpenseService;
 
 @RestController
 @RequestMapping("/api/expenses")
