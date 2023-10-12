@@ -41,4 +41,14 @@ public class UserService {
         user.setPassword(newPassword);
         return userRepository.save(user);
     }
+
+    public User getUserById(String id) {
+        return userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    public User updateUserBalance(String id, double newBalance) {
+        User user = getUserById(id);
+        user.setBalance(newBalance);
+        return userRepository.save(user);
+    }
 }

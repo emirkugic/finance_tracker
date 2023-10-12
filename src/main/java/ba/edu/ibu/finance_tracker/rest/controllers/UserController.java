@@ -47,4 +47,15 @@ public class UserController {
     public User updatePassword(@PathVariable String id, @RequestBody String newPassword) {
         return userService.updateUserPassword(id, newPassword);
     }
+
+    @GetMapping("/{id}/balance")
+    public double getUserBalance(@PathVariable String id) {
+        User user = userService.getUserById(id);
+        return user.getBalance();
+    }
+
+    @PutMapping("/{id}/balance")
+    public User updateUserBalance(@PathVariable String id, @RequestBody double newBalance) {
+        return userService.updateUserBalance(id, newBalance);
+    }
 }

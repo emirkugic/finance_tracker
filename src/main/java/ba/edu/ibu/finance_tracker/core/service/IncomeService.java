@@ -4,18 +4,24 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import ba.edu.ibu.finance_tracker.core.model.Income;
+import ba.edu.ibu.finance_tracker.core.model.User;
 import ba.edu.ibu.finance_tracker.core.repository.IncomeRepository;
 
 @Service
 public class IncomeService {
 
     private final IncomeRepository incomeRepository;
+    private final UserService userService;
 
-    public IncomeService(IncomeRepository incomeRepository) {
+    public IncomeService(IncomeRepository incomeRepository, UserService userService) {
         this.incomeRepository = incomeRepository;
+        this.userService = userService;
     }
 
     public Income createIncome(Income income) {
+        User user = userService.getUserById(income.getUserId());
+        user.setBalance(user.getBalance() + income.getAmount());
+        userService.updateUserBalance(user.getId(), user.getBalance());
         return incomeRepository.save(income);
     }
 
