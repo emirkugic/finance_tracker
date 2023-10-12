@@ -50,6 +50,9 @@ public class CreditCard {
     }
 
     public void setExpiryDate(String expiryDate) {
+        if (!expiryDate.matches("\\d{2}-\\d{4}")) {
+            throw new IllegalArgumentException("Invalid expiry date format. Expected: MM-yyyy");
+        }
         this.expiryDate = expiryDate;
     }
 

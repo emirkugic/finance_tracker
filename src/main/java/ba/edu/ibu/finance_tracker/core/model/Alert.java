@@ -1,7 +1,11 @@
 package ba.edu.ibu.finance_tracker.core.model;
 
+import java.time.LocalDateTime;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Document
 public class Alert {
@@ -10,7 +14,9 @@ public class Alert {
     private String id;
     private String userId;
     private String message;
-    private String alertDate;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SS")
+    private LocalDateTime alertDate;
 
     public String getId() {
         return id;
@@ -36,11 +42,11 @@ public class Alert {
         this.message = message;
     }
 
-    public String getAlertDate() {
+    public LocalDateTime getAlertDate() {
         return alertDate;
     }
 
-    public void setAlertDate(String alertDate) {
+    public void setAlertDate(LocalDateTime alertDate) {
         this.alertDate = alertDate;
     }
 
