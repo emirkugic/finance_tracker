@@ -1,6 +1,8 @@
 package ba.edu.ibu.finance_tracker.core.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 
 import ba.edu.ibu.finance_tracker.core.model.Expense;
@@ -43,4 +45,36 @@ public class ExpenseService {
     public List<Expense> getAllExpensesByUserId(String userId) {
         return expenseRepository.findByUserId(userId);
     }
+
+    public List<Expense> getAllExpensesByParentId(String parentId) {
+        List<User> children = userService.getChildrenByParentId(parentId);
+        List<String> childrenIds = children.stream()
+                .map(User::getId)
+                .collect(Collectors.toList());
+        return expenseRepository.findByUserIdIn(childrenIds);
+    }
+
+    public Expense transferToChild(String parentId, String childId, double amount) {
+        User parent = userService.getUserById(parentId);
+        User child = userService.getUserById(childId);
+
+        if (parent.getBalance() < amount) {
+            throw new RuntimeException("Insufficient balance");
+        }
+
+        parent.setBalance(parent.getBalance() - amount);
+        child.setBalance(child.getBalance() + amount);
+
+        userService.updateUserBalance(parentId, parent.getBalance());
+        userService.updateUserBalance(childId, child.getBalance());
+
+        Expense transferExpense = new Expense();
+        transferExpense.setUserId(parentId);
+        transferExpense.setAmount(amount);
+        transferExpense.setTransferToChild(true);
+        transferExpense.setRecipientChildId(childId);
+
+        return expenseRepository.save(transferExpense);
+    }
+
 }

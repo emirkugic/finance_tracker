@@ -13,6 +13,15 @@ public class User {
     private String email;
     private String password;
     private double balance;
+    private String parentId;
+
+    public String getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
+    }
 
     public String getId() {
         return id;

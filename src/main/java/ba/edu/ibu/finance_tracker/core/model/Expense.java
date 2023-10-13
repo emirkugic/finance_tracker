@@ -16,6 +16,24 @@ public class Expense {
     private String source;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SS")
     private LocalDateTime expenseDate;
+    private boolean isTransferToChild;
+    private String recipientChildId;
+
+    public boolean isTransferToChild() {
+        return isTransferToChild;
+    }
+
+    public void setTransferToChild(boolean isTransferToChild) {
+        this.isTransferToChild = isTransferToChild;
+    }
+
+    public String getRecipientChildId() {
+        return recipientChildId;
+    }
+
+    public void setRecipientChildId(String recipientChildId) {
+        this.recipientChildId = recipientChildId;
+    }
 
     public String getId() {
         return id;

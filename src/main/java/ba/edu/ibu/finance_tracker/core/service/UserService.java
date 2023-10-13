@@ -51,4 +51,17 @@ public class UserService {
         user.setBalance(newBalance);
         return userRepository.save(user);
     }
+
+    public List<User> getChildrenByParentId(String parentId) {
+        return userRepository.findAllByParentId(parentId);
+    }
+
+    public boolean isChildOfParent(String childId, String parentId) {
+        User child = getUserById(childId);
+        return parentId.equals(child.getParentId());
+    }
+
+    public List<User> getAllChildren(String parentId) {
+        return userRepository.findAllByParentId(parentId);
+    }
 }

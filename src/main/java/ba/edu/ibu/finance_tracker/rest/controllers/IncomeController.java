@@ -10,6 +10,7 @@ import ba.edu.ibu.finance_tracker.core.service.IncomeService;
 @RestController
 @RequestMapping("/api/incomes")
 public class IncomeController {
+
     private final IncomeService incomeService;
 
     public IncomeController(IncomeService incomeService) {
@@ -39,5 +40,10 @@ public class IncomeController {
     @GetMapping
     public List<Income> getAllIncomes() {
         return incomeService.getAllIncomes();
+    }
+
+    @GetMapping("/parent/{parentId}")
+    public List<Income> getAllIncomesByParentId(@PathVariable String parentId) {
+        return incomeService.getAllIncomesByParentId(parentId);
     }
 }

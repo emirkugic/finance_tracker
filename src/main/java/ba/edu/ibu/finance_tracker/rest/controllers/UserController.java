@@ -58,4 +58,9 @@ public class UserController {
     public User updateUserBalance(@PathVariable String id, @RequestBody double newBalance) {
         return userService.updateUserBalance(id, newBalance);
     }
+
+    @GetMapping("/{parentId}/children")
+    public List<User> getAllChildren(@PathVariable String parentId) {
+        return userService.getAllChildren(parentId);
+    }
 }

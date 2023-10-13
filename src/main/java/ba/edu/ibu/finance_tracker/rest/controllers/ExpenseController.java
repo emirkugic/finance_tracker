@@ -17,6 +17,7 @@ import ba.edu.ibu.finance_tracker.core.service.ExpenseService;
 @RestController
 @RequestMapping("/api/expenses")
 public class ExpenseController {
+
     final private ExpenseService expenseService;
 
     public ExpenseController(ExpenseService expenseService) {
@@ -46,6 +47,17 @@ public class ExpenseController {
     @GetMapping("user/{userId}")
     public List<Expense> getExpensesByUserId(@PathVariable String userId) {
         return expenseService.getAllExpensesByUserId(userId);
+    }
+
+    @GetMapping("/parent/{parentId}")
+    public List<Expense> getAllExpensesByParentId(@PathVariable String parentId) {
+        return expenseService.getAllExpensesByParentId(parentId);
+    }
+
+    @PostMapping("/transfer/{parentId}/{childId}")
+    public Expense transferToChild(@PathVariable String parentId, @PathVariable String childId,
+            @RequestBody double amount) {
+        return expenseService.transferToChild(parentId, childId, amount);
     }
 
 }

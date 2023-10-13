@@ -1,6 +1,8 @@
 package ba.edu.ibu.finance_tracker.core.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 
 import ba.edu.ibu.finance_tracker.core.model.Income;
@@ -42,6 +44,14 @@ public class IncomeService {
 
     public List<Income> getAllIncomesByUserId(String userId) {
         return incomeRepository.findByUserId(userId);
+    }
+
+    public List<Income> getAllIncomesByParentId(String parentId) {
+        List<User> children = userService.getChildrenByParentId(parentId);
+        List<String> childrenIds = children.stream()
+                .map(User::getId)
+                .collect(Collectors.toList());
+        return incomeRepository.findByUserIdIn(childrenIds);
     }
 
 }
