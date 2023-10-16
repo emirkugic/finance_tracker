@@ -80,4 +80,9 @@ public class UserController {
         return new ResponseEntity<>(results, HttpStatus.OK);
     }
 
+    @GetMapping("/send-to-all")
+    public String sendEmailToAllUsers(@RequestParam String message) {
+        return userService.sendEmailToAllUsers(message);
+    }
+
 }

@@ -6,5 +6,6 @@ configuration:
     description: 'A simple system built with Spring Boot'
     developer: 'Emir Kugic'
     email: 'emir.kugic@ibu.edu.ba'
+    
   mailsender:
     default: 'sendgrid'

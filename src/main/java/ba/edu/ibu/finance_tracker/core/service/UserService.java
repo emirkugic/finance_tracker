@@ -1,8 +1,11 @@
 package ba.edu.ibu.finance_tracker.core.service;
 
+import ba.edu.ibu.finance_tracker.core.api.mailsender.MailSender;
 import ba.edu.ibu.finance_tracker.core.model.User;
 import ba.edu.ibu.finance_tracker.core.repository.UserRepository;
 import ba.edu.ibu.finance_tracker.rest.DTO.UserSearchResultDTO;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -71,6 +74,22 @@ public class UserService {
                 .map(user -> new UserSearchResultDTO(
                         user.getId(), user.getName(), user.getSurname(), user.getEmail()))
                 .collect(Collectors.toList());
+    }
+
+    @Autowired
+    private MailSender mailgunSender;
+    @Autowired
+    private MailSender sendgridSender;
+
+    public String sendEmailToAllUsers(String message) {
+        List<User> users = userRepository.findAll();
+
+        // Method 1: Using a specific implementation name
+        return mailgunSender.send(users, message);
+        // return sendgridSender.send(users, message);
+
+        // Method 2: The appropriate implementation is decided based on configuration
+        // return mailSender.send(users, message);
     }
 
 }
