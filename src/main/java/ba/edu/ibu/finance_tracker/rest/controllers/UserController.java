@@ -2,15 +2,20 @@ package ba.edu.ibu.finance_tracker.rest.controllers;
 
 import ba.edu.ibu.finance_tracker.core.model.User;
 import ba.edu.ibu.finance_tracker.core.service.UserService;
+import ba.edu.ibu.finance_tracker.rest.DTO.UserSearchResultDTO;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import java.util.List;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -63,4 +68,16 @@ public class UserController {
     public List<User> getAllChildren(@PathVariable String parentId) {
         return userService.getAllChildren(parentId);
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> searchUsers(
+            @RequestParam String name,
+            @RequestParam String surname) {
+        List<UserSearchResultDTO> results = userService.searchUsers(name, surname);
+        if (results.isEmpty()) {
+            return new ResponseEntity<>("No users found", HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(results, HttpStatus.OK);
+    }
+
 }

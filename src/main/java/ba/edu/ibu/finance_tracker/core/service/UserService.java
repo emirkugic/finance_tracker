@@ -2,10 +2,10 @@ package ba.edu.ibu.finance_tracker.core.service;
 
 import ba.edu.ibu.finance_tracker.core.model.User;
 import ba.edu.ibu.finance_tracker.core.repository.UserRepository;
-
+import ba.edu.ibu.finance_tracker.rest.DTO.UserSearchResultDTO;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -64,4 +64,13 @@ public class UserService {
     public List<User> getAllChildren(String parentId) {
         return userRepository.findAllByParentId(parentId);
     }
+
+    public List<UserSearchResultDTO> searchUsers(String name, String surname) {
+        return userRepository.findByNameAndSurnameLike(name, surname)
+                .stream()
+                .map(user -> new UserSearchResultDTO(
+                        user.getId(), user.getName(), user.getSurname(), user.getEmail()))
+                .collect(Collectors.toList());
+    }
+
 }
