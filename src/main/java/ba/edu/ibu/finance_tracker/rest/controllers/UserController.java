@@ -2,7 +2,7 @@ package ba.edu.ibu.finance_tracker.rest.controllers;
 
 import ba.edu.ibu.finance_tracker.core.model.User;
 import ba.edu.ibu.finance_tracker.core.service.UserService;
-import ba.edu.ibu.finance_tracker.rest.DTO.UserSearchResultDTO;
+import ba.edu.ibu.finance_tracker.rest.dto.UserSearchResultDTO;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import java.util.List;

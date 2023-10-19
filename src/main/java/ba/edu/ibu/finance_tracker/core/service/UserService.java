@@ -3,7 +3,7 @@ package ba.edu.ibu.finance_tracker.core.service;
 import ba.edu.ibu.finance_tracker.core.api.mailsender.MailSender;
 import ba.edu.ibu.finance_tracker.core.model.User;
 import ba.edu.ibu.finance_tracker.core.repository.UserRepository;
-import ba.edu.ibu.finance_tracker.rest.DTO.UserSearchResultDTO;
+import ba.edu.ibu.finance_tracker.rest.dto.UserSearchResultDTO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

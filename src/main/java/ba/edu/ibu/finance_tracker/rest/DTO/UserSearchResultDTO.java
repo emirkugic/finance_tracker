@@ -1,4 +1,4 @@
-package ba.edu.ibu.finance_tracker.rest.DTO;
+package ba.edu.ibu.finance_tracker.rest.dto;
 
 public class UserSearchResultDTO {
     private String id;
