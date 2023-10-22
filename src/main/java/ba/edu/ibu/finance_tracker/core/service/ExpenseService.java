@@ -3,9 +3,6 @@ package ba.edu.ibu.finance_tracker.core.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-
-import javax.swing.text.html.Option;
-
 import org.springframework.stereotype.Service;
 import ba.edu.ibu.finance_tracker.core.model.Expense;
 import ba.edu.ibu.finance_tracker.core.model.User;
@@ -25,7 +22,7 @@ public class ExpenseService {
         this.userRepository = userRepository;
     }
 
-    public Expense createExpense(Expense expense) {
+    public String createExpense(Expense expense) {
         Optional<User> existingUser = userRepository.findById(expense.getUserId());
         if (existingUser.isEmpty()) {
             throw new RuntimeException("UserID doesn't exist");
@@ -36,6 +33,7 @@ public class ExpenseService {
             if (existingChild.isEmpty()) {
                 throw new RuntimeException("ChildID doesn't exist");
             }
+            expense.setTransferToChild(true);
         } else {
             expense.setTransferToChild(false);
         }
@@ -46,25 +44,28 @@ public class ExpenseService {
         if (expense.getExpenseDate() == null) {
             expense.setExpenseDate(LocalDateTime.now());
         }
-        return expenseRepository.save(expense);
+        expenseRepository.save(expense);
+
+        return "Creating expense was successful";
     }
 
     public void deleteExpense(String id) {
-        Optional<User> existingUser = userRepository.findById(id);
-        if (existingUser.isEmpty()) {
-            throw new RuntimeException("UserID doesn't exist");
+        Optional<Expense> existingExpense = expenseRepository.findById(id);
+        if (existingExpense.isEmpty()) {
+            throw new RuntimeException("ExpenseID doesn't exist");
         }
         expenseRepository.deleteById(id);
     }
 
-    public Expense updateExpenseAmount(String id, double newAmount) {
-        Optional<User> existingUser = userRepository.findById(id);
-        if (existingUser.isEmpty()) {
-            throw new RuntimeException("UserID doesn't exist");
+    public boolean updateExpenseAmount(String id, double newAmount) {
+        Optional<Expense> existingExpense = expenseRepository.findById(id);
+        if (existingExpense.isEmpty()) {
+            throw new RuntimeException("ExpenseID doesn't exist");
         }
-        Expense expenses = expenseRepository.findById(id).orElseThrow(() -> new RuntimeException("Expense not found"));
-        expenses.setAmount(newAmount);
-        return expenseRepository.save(expenses);
+        Expense expense = existingExpense.get();
+        expense.setAmount(newAmount);
+        expenseRepository.save(expense);
+        return true;
     }
 
     public List<Expense> getAllExpenses() {
@@ -106,9 +107,9 @@ public class ExpenseService {
         User parent = userService.getUserById(parentId);
         User child = userService.getUserById(childId);
 
-        if (parent.getBalance() < amount) {
-            throw new RuntimeException("Insufficient balance");
-        }
+        // if (parent.getBalance() < amount) {
+        // throw new RuntimeException("Insufficient balance");
+        // }
 
         parent.setBalance(parent.getBalance() - amount);
         child.setBalance(child.getBalance() + amount);

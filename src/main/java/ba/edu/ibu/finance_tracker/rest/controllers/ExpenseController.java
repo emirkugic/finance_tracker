@@ -2,6 +2,7 @@ package ba.edu.ibu.finance_tracker.rest.controllers;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ba.edu.ibu.finance_tracker.core.model.Expense;
 import ba.edu.ibu.finance_tracker.core.service.ExpenseService;
 import ba.edu.ibu.finance_tracker.rest.dto.ExpenseDTO.ExpenseCreateRequestDTO;
+import ba.edu.ibu.finance_tracker.rest.dto.ExpenseDTO.UpdateExpenseAmountDTO;
 
 @RestController
 @RequestMapping("/api/expenses")
@@ -26,7 +28,7 @@ public class ExpenseController {
     }
 
     @PostMapping
-    public Expense createExpense(@RequestBody ExpenseCreateRequestDTO expenseRequest) {
+    public ResponseEntity<String> createExpense(@RequestBody ExpenseCreateRequestDTO expenseRequest) {
         Expense newExpense = new Expense();
         newExpense.setUserId(expenseRequest.getUserId());
         newExpense.setAmount(expenseRequest.getAmount());
@@ -34,9 +36,10 @@ public class ExpenseController {
         newExpense.setSource(expenseRequest.getSource());
         newExpense.setExpenseDate(expenseRequest.getExpenseDate());
         newExpense.setRecipientChildId(expenseRequest.getRecipientChildId());
-        // newExpense.setTransferToChild(expenseRequest.getIsTransferToChild());
 
-        return expenseService.createExpense(newExpense);
+        String response = expenseService.createExpense(newExpense);
+
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
@@ -44,9 +47,10 @@ public class ExpenseController {
         expenseService.deleteExpense(id);
     }
 
-    @PutMapping("/{id}/newAmount")
-    public Expense updateExpenseAmount(@PathVariable String id, @RequestBody double newAmount) {
-        return expenseService.updateExpenseAmount(id, newAmount);
+    @PutMapping("/updateAmount")
+    public ResponseEntity<Boolean> updateExpenseAmount(@RequestBody UpdateExpenseAmountDTO requestDTO) {
+        boolean isSuccess = expenseService.updateExpenseAmount(requestDTO.getId(), requestDTO.getNewAmount());
+        return ResponseEntity.ok(isSuccess);
     }
 
     @GetMapping
