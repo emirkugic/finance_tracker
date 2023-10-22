@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import ba.edu.ibu.finance_tracker.core.model.Income;
 import ba.edu.ibu.finance_tracker.core.model.User;
 import ba.edu.ibu.finance_tracker.core.repository.IncomeRepository;
-import ba.edu.ibu.finance_tracker.rest.dto.UserDTO;
+import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.UserDTO;
 
 @Service
 public class IncomeService {

@@ -3,11 +3,11 @@ package ba.edu.ibu.finance_tracker.core.service;
 import ba.edu.ibu.finance_tracker.core.api.mailsender.MailSender;
 import ba.edu.ibu.finance_tracker.core.model.User;
 import ba.edu.ibu.finance_tracker.core.repository.UserRepository;
-import ba.edu.ibu.finance_tracker.rest.dto.EmailUpdateResponseDTO;
-import ba.edu.ibu.finance_tracker.rest.dto.PasswordUpdateRequestDTO;
-import ba.edu.ibu.finance_tracker.rest.dto.UserCreateRequestDTO;
-import ba.edu.ibu.finance_tracker.rest.dto.UserDTO;
-import ba.edu.ibu.finance_tracker.rest.dto.UserSearchResultDTO;
+import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.EmailUpdateResponseDTO;
+import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.PasswordUpdateRequestDTO;
+import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.UserCreateRequestDTO;
+import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.UserDTO;
+import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.UserSearchResultDTO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

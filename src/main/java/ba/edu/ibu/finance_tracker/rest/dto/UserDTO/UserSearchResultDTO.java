@@ -1,21 +1,16 @@
-package ba.edu.ibu.finance_tracker.rest.dto;
+package ba.edu.ibu.finance_tracker.rest.dto.UserDTO;
 
-import ba.edu.ibu.finance_tracker.core.model.User;
-
-public class UserDTO {
-
+public class UserSearchResultDTO {
     private String id;
     private String name;
     private String surname;
     private String email;
-    private double balance;
 
-    public UserDTO(User user) {
-        this.id = user.getId();
-        this.name = user.getName();
-        this.surname = user.getSurname();
-        this.email = user.getEmail();
-        this.balance = user.getBalance();
+    public UserSearchResultDTO(String id, String name, String surname, String email) {
+        this.id = id;
+        this.name = name;
+        this.surname = surname;
+        this.email = email;
     }
 
     public String getId() {
@@ -48,14 +43,6 @@ public class UserDTO {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public double getBalance() {
-        return balance;
-    }
-
-    public void setBalance(double balance) {
-        this.balance = balance;
     }
 
 }

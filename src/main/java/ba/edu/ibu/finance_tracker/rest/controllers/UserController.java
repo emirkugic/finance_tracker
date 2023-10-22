@@ -2,11 +2,11 @@ package ba.edu.ibu.finance_tracker.rest.controllers;
 
 import ba.edu.ibu.finance_tracker.core.model.User;
 import ba.edu.ibu.finance_tracker.core.service.UserService;
-import ba.edu.ibu.finance_tracker.rest.dto.EmailUpdateResponseDTO;
-import ba.edu.ibu.finance_tracker.rest.dto.PasswordUpdateRequestDTO;
-import ba.edu.ibu.finance_tracker.rest.dto.UserCreateRequestDTO;
-import ba.edu.ibu.finance_tracker.rest.dto.UserDTO;
-import ba.edu.ibu.finance_tracker.rest.dto.UserSearchResultDTO;
+import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.EmailUpdateResponseDTO;
+import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.PasswordUpdateRequestDTO;
+import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.UserCreateRequestDTO;
+import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.UserDTO;
+import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.UserSearchResultDTO;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import java.util.List;

@@ -1,13 +1,30 @@
-package ba.edu.ibu.finance_tracker.rest.dto;
+package ba.edu.ibu.finance_tracker.rest.dto.UserDTO;
 
-public class UserCreateRequestDTO {
+import ba.edu.ibu.finance_tracker.core.model.User;
 
+public class UserDTO {
+
+    private String id;
     private String name;
     private String surname;
     private String email;
-    private String password;
     private double balance;
-    private String parentId;
+
+    public UserDTO(User user) {
+        this.id = user.getId();
+        this.name = user.getName();
+        this.surname = user.getSurname();
+        this.email = user.getEmail();
+        this.balance = user.getBalance();
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -33,28 +50,12 @@ public class UserCreateRequestDTO {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public double getBalance() {
         return balance;
     }
 
     public void setBalance(double balance) {
         this.balance = balance;
-    }
-
-    public String getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(String parentId) {
-        this.parentId = parentId;
     }
 
 }

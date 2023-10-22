@@ -1,4 +1,4 @@
-package ba.edu.ibu.finance_tracker.rest.dto;
+package ba.edu.ibu.finance_tracker.rest.dto.UserDTO;
 
 public class EmailUpdateResponseDTO {
 
