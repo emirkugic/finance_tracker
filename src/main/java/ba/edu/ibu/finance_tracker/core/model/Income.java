@@ -1,9 +1,8 @@
 package ba.edu.ibu.finance_tracker.core.model;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Document
 public class Income {
@@ -15,8 +14,7 @@ public class Income {
     private String source;
     private String receivedThrough;
     private String from;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SS")
-    private LocalDateTime receivedDate;
+    private Date receivedDate;
 
     public String getId() {
         return id;
@@ -50,11 +48,11 @@ public class Income {
         this.source = source;
     }
 
-    public LocalDateTime getReceivedDate() {
+    public Date getReceivedDate() {
         return receivedDate;
     }
 
-    public void setReceivedDate(LocalDateTime receivedDate) {
+    public void setReceivedDate(Date receivedDate) {
         this.receivedDate = receivedDate;
     }
 

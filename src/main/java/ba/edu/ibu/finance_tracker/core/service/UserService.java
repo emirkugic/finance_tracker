@@ -8,14 +8,11 @@ import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.PasswordUpdateRequestDTO;
 import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.UserCreateRequestDTO;
 import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.UserDTO;
 import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.UserSearchResultDTO;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import javax.management.RuntimeErrorException;
 
 @Service
 public class UserService {
@@ -139,8 +136,8 @@ public class UserService {
 
     @Autowired
     private MailSender mailgunSender;
-    @Autowired
-    private MailSender sendgridSender;
+    // @Autowired
+    // private MailSender sendgridSender;
 
     public String sendEmailToAllUsers(String message) {
         List<User> users = userRepository.findAll();

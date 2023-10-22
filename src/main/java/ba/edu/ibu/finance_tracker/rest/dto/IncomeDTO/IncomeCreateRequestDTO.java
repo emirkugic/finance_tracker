@@ -1,7 +1,6 @@
 package ba.edu.ibu.finance_tracker.rest.dto.IncomeDTO;
 
-import java.time.LocalDateTime;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import java.util.Date;
 
 public class IncomeCreateRequestDTO {
 
@@ -10,8 +9,7 @@ public class IncomeCreateRequestDTO {
     private String source;
     private String receivedThrough;
     private String from;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SS")
-    private LocalDateTime receivedDate;
+    private Date receivedDate;
 
     public String getUserId() {
         return userId;
@@ -53,11 +51,11 @@ public class IncomeCreateRequestDTO {
         this.from = from;
     }
 
-    public LocalDateTime getReceivedDate() {
+    public Date getReceivedDate() {
         return receivedDate;
     }
 
-    public void setReceivedDate(LocalDateTime receivedDate) {
+    public void setReceivedDate(Date receivedDate) {
         this.receivedDate = receivedDate;
     }
 

@@ -1,12 +1,11 @@
 package ba.edu.ibu.finance_tracker.core.service;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import org.springframework.stereotype.Service;
-
 import ba.edu.ibu.finance_tracker.core.model.Income;
 import ba.edu.ibu.finance_tracker.core.model.User;
 import ba.edu.ibu.finance_tracker.core.repository.IncomeRepository;
@@ -36,7 +35,8 @@ public class IncomeService {
         user.setBalance(user.getBalance() + income.getAmount());
         userService.updateUserBalance(user.getId(), user.getBalance());
         if (income.getReceivedDate() == null) {
-            income.setReceivedDate(LocalDateTime.now()); // need help with this one why it doesnt work :(
+            income.setReceivedDate(Date.from(LocalDateTime.now().atZone(java.time.ZoneId.systemDefault()).toInstant()));
+
         }
         return incomeRepository.save(income);
     }

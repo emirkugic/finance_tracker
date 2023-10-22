@@ -1,9 +1,6 @@
 package ba.edu.ibu.finance_tracker.rest.dto.ExpenseDTO;
 
-import java.time.LocalDateTime;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-
+import java.util.Date;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public class ExpenseCreateRequestDTO {
@@ -14,9 +11,7 @@ public class ExpenseCreateRequestDTO {
     private String category;
     @Schema(defaultValue = "Cash")
     private String source;
-    @Schema(defaultValue = "2023-10-22 20:42:25.41") // remind me to ask you for this bug im having with the date format
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SS")
-    private LocalDateTime expenseDate;
+    private Date expenseDate;
     @Schema(defaultValue = "emirson")
     private String recipientChildId;
 
@@ -52,11 +47,11 @@ public class ExpenseCreateRequestDTO {
         this.source = source;
     }
 
-    public LocalDateTime getExpenseDate() {
+    public Date getExpenseDate() {
         return expenseDate;
     }
 
-    public void setExpenseDate(LocalDateTime expenseDate) {
+    public void setExpenseDate(Date expenseDate) {
         this.expenseDate = expenseDate;
     }
 

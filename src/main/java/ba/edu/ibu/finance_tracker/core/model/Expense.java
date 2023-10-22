@@ -1,9 +1,8 @@
 package ba.edu.ibu.finance_tracker.core.model;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Document
 public class Expense {
@@ -14,8 +13,7 @@ public class Expense {
     private double amount;
     private String category;
     private String source;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SS")
-    private LocalDateTime expenseDate;
+    private Date expenseDate;
     private boolean isTransferToChild;
     private String recipientChildId;
 
@@ -75,11 +73,11 @@ public class Expense {
         this.source = source;
     }
 
-    public LocalDateTime getExpenseDate() {
+    public Date getExpenseDate() {
         return expenseDate;
     }
 
-    public void setExpenseDate(LocalDateTime expenseDate) {
+    public void setExpenseDate(Date expenseDate) {
         this.expenseDate = expenseDate;
     }
 

@@ -1,23 +1,23 @@
 package ba.edu.ibu.finance_tracker.rest.dto.AlertDTO;
 
-import java.time.LocalDateTime;
-import com.fasterxml.jackson.annotation.JsonFormat;
-
+import java.util.Date;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public class AlertCreateRequestDTO {
 
     @Schema(defaultValue = "emir")
     private String userId;
-
     @Schema(defaultValue = "Something happened to your account")
     private String message;
+    private Date alertDate;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.SS")
-    private LocalDateTime alertDate;
-    // i cant get it to display the
-    // date in the format i want in the
-    // request message help pls
+    public Date getAlertDate() {
+        return alertDate;
+    }
+
+    public void setAlertDate(Date alertDate) {
+        this.alertDate = alertDate;
+    }
 
     public String getUserId() {
         return userId;
@@ -35,12 +35,12 @@ public class AlertCreateRequestDTO {
         this.message = message;
     }
 
-    public LocalDateTime getAlertDate() {
-        return alertDate;
-    }
+    // public LocalDateTime getAlertDate() {
+    // return alertDate;
+    // }
 
-    public void setAlertDate(LocalDateTime alertDate) {
-        this.alertDate = alertDate;
-    }
+    // public void setAlertDate(LocalDateTime alertDate) {
+    // this.alertDate = alertDate;
+    // }
 
 }

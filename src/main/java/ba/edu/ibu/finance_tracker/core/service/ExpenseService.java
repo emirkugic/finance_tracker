@@ -1,6 +1,7 @@
 package ba.edu.ibu.finance_tracker.core.service;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
@@ -42,7 +43,7 @@ public class ExpenseService {
         user.setBalance(user.getBalance() - expense.getAmount());
         userService.updateUserBalance(user.getId(), user.getBalance());
         if (expense.getExpenseDate() == null) {
-            expense.setExpenseDate(LocalDateTime.now());
+            expense.setExpenseDate(Date.from(LocalDateTime.now().atZone(java.time.ZoneId.systemDefault()).toInstant()));
         }
         expenseRepository.save(expense);
 

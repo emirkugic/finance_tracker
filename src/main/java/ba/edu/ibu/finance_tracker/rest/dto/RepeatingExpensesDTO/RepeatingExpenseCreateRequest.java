@@ -1,15 +1,13 @@
 package ba.edu.ibu.finance_tracker.rest.dto.RepeatingExpensesDTO;
 
-import java.time.LocalDateTime;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import java.util.Date;
 
 public class RepeatingExpenseCreateRequest {
 
     private String userId;
     private double amount;
     private String category;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SS")
-    private LocalDateTime dueDate;
+    private Date dueDate;
 
     public String getUserId() {
         return userId;
@@ -35,11 +33,11 @@ public class RepeatingExpenseCreateRequest {
         this.category = category;
     }
 
-    public LocalDateTime getDueDate() {
+    public Date getDueDate() {
         return dueDate;
     }
 
-    public void setDueDate(LocalDateTime dueDate) {
+    public void setDueDate(Date dueDate) {
         this.dueDate = dueDate;
     }
 

@@ -1,11 +1,8 @@
 package ba.edu.ibu.finance_tracker.core.model;
 
-import java.time.LocalDateTime;
-
+import java.util.Date;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Document
 public class RepeatingExpense {
@@ -15,8 +12,7 @@ public class RepeatingExpense {
     private String userId;
     private double amount;
     private String category;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SS")
-    private LocalDateTime dueDate;
+    private Date dueDate;
 
     public String getId() {
         return id;
@@ -50,11 +46,11 @@ public class RepeatingExpense {
         this.category = category;
     }
 
-    public LocalDateTime getDueDate() {
+    public Date getDueDate() {
         return dueDate;
     }
 
-    public void setDueDate(LocalDateTime dueDate) {
+    public void setDueDate(Date dueDate) {
         this.dueDate = dueDate;
     }
 

@@ -1,6 +1,7 @@
 package ba.edu.ibu.finance_tracker.core.service;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,8 @@ public class RepeatingExpenseService {
 
     public RepeatingExpense createRepeatingExpense(RepeatingExpense repeatingExpense) {
         if (repeatingExpense.getDueDate() == null) {
-            repeatingExpense.setDueDate(LocalDateTime.now());
+            repeatingExpense
+                    .setDueDate(Date.from(LocalDateTime.now().atZone(java.time.ZoneId.systemDefault()).toInstant()));
         }
         return repeatingExpenseRepository.save(repeatingExpense);
     }
