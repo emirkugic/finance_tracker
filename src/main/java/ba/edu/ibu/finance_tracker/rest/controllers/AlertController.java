@@ -4,6 +4,8 @@ import org.springframework.web.bind.annotation.*;
 
 import ba.edu.ibu.finance_tracker.core.model.Alert;
 import ba.edu.ibu.finance_tracker.core.service.AlertService;
+import ba.edu.ibu.finance_tracker.rest.dto.AlertDTO.AlertCreateRequestDTO;
+import ba.edu.ibu.finance_tracker.rest.dto.AlertDTO.AlertUpdateRequestDTO;
 
 import java.util.List;
 
@@ -18,8 +20,8 @@ public class AlertController {
     }
 
     @PostMapping
-    public Alert createAlert(@RequestBody Alert alert) {
-        return alertService.createAlert(alert);
+    public Alert createAlert(@RequestBody AlertCreateRequestDTO alertRequest) {
+        return alertService.createAlert(alertRequest);
     }
 
     @GetMapping
@@ -32,12 +34,9 @@ public class AlertController {
         return alertService.getAlertById(id).orElse(null);
     }
 
-    @PutMapping("/{id}")
-    public Alert updateAlert(@PathVariable String id, @RequestBody Alert updatedAlert) {
-        if (!id.equals(updatedAlert.getId())) {
-            throw new RuntimeException("ID mismatch!");
-        }
-        return alertService.updateAlert(updatedAlert);
+    @PutMapping("/update")
+    public Alert updateAlert(@RequestBody AlertUpdateRequestDTO updateRequest) {
+        return alertService.updateAlert(updateRequest);
     }
 
     @DeleteMapping("/{id}")

@@ -1,6 +1,8 @@
 package ba.edu.ibu.finance_tracker.rest.controllers;
 
 import java.util.List;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import ba.edu.ibu.finance_tracker.core.model.CreditCard;
@@ -16,9 +18,10 @@ public class CreditCardController {
         this.creditCardService = creditCardService;
     }
 
-    @PostMapping
-    public CreditCard createCreditCard(@RequestBody CreditCard creditCard) {
-        return creditCardService.createCreditCard(creditCard);
+    @PostMapping("/creditcard")
+    public ResponseEntity<String> createCreditCard(@RequestBody CreditCard creditCard) {
+        String response = creditCardService.createCreditCard(creditCard);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
