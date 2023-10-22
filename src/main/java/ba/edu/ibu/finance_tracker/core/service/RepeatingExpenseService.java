@@ -3,11 +3,7 @@ package ba.edu.ibu.finance_tracker.core.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-
-import javax.swing.text.html.Option;
-
 import org.springframework.stereotype.Service;
-
 import ba.edu.ibu.finance_tracker.core.model.RepeatingExpense;
 import ba.edu.ibu.finance_tracker.core.model.User;
 import ba.edu.ibu.finance_tracker.core.repository.RepeatingExpenseRepository;
@@ -69,7 +65,6 @@ public class RepeatingExpenseService {
         if (user.isEmpty()) {
             throw new RuntimeException("User not found");
         }
-
         return repeatingExpenseRepository.findByUserId(userId);
     }
 }

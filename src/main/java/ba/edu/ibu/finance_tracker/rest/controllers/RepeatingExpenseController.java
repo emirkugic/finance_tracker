@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 
 import ba.edu.ibu.finance_tracker.core.model.RepeatingExpense;
 import ba.edu.ibu.finance_tracker.core.service.RepeatingExpenseService;
+import ba.edu.ibu.finance_tracker.rest.dto.RepeatingExpensesDTO.RepeatingExpenseCreateRequest;
 
 @RestController
 @RequestMapping("/api/repeating-expenses")
@@ -17,7 +18,13 @@ public class RepeatingExpenseController {
     }
 
     @PostMapping
-    public RepeatingExpense createRepeatingExpense(@RequestBody RepeatingExpense repeatingExpense) {
+    public RepeatingExpense createRepeatingExpense(@RequestBody RepeatingExpenseCreateRequest requestDto) {
+        RepeatingExpense repeatingExpense = new RepeatingExpense();
+        repeatingExpense.setUserId(requestDto.getUserId());
+        repeatingExpense.setAmount(requestDto.getAmount());
+        repeatingExpense.setCategory(requestDto.getCategory());
+        repeatingExpense.setDueDate(requestDto.getDueDate());
+
         return repeatingExpenseService.createRepeatingExpense(repeatingExpense);
     }
 
