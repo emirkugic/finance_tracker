@@ -15,7 +15,10 @@ public class Expense {
     private String category;
     private String source;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SS")
-    private LocalDateTime expenseDate = LocalDateTime.now();
+    private LocalDateTime expenseDate; // the reason I didn't put = LocalDateTime.now() is because I want to set it
+                                       // manually in case the user has forgotten to add the expense on the day he
+                                       // received it, but the user can also leave it empty and it will be set to
+                                       // today's date by the service
     private boolean isTransferToChild;
     private String recipientChildId;
 

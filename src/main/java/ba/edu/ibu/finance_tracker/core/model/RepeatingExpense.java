@@ -15,7 +15,6 @@ public class RepeatingExpense {
     private String userId;
     private double amount;
     private String category;
-
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SS")
     private LocalDateTime dueDate;
 

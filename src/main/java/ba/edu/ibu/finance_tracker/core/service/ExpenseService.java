@@ -1,5 +1,6 @@
 package ba.edu.ibu.finance_tracker.core.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import ba.edu.ibu.finance_tracker.core.model.Expense;
 import ba.edu.ibu.finance_tracker.core.model.User;
 import ba.edu.ibu.finance_tracker.core.repository.ExpenseRepository;
+import ba.edu.ibu.finance_tracker.rest.dto.UserDTO;
 
 @Service
 public class ExpenseService {
@@ -24,6 +26,9 @@ public class ExpenseService {
         User user = userService.getUserById(expense.getUserId());
         user.setBalance(user.getBalance() - expense.getAmount());
         userService.updateUserBalance(user.getId(), user.getBalance());
+        if (expense.getExpenseDate() == null) {
+            expense.setExpenseDate(LocalDateTime.now());
+        }
         return expenseRepository.save(expense);
     }
 
@@ -47,9 +52,9 @@ public class ExpenseService {
     }
 
     public List<Expense> getAllExpensesByParentId(String parentId) {
-        List<User> children = userService.getChildrenByParentId(parentId);
+        List<UserDTO> children = userService.getChildrenByParentId(parentId);
         List<String> childrenIds = children.stream()
-                .map(User::getId)
+                .map(UserDTO::getId)
                 .collect(Collectors.toList());
         return expenseRepository.findByUserIdIn(childrenIds);
     }

@@ -3,12 +3,19 @@ package ba.edu.ibu.finance_tracker.core.service;
 import ba.edu.ibu.finance_tracker.core.api.mailsender.MailSender;
 import ba.edu.ibu.finance_tracker.core.model.User;
 import ba.edu.ibu.finance_tracker.core.repository.UserRepository;
+import ba.edu.ibu.finance_tracker.rest.dto.EmailUpdateResponseDTO;
+import ba.edu.ibu.finance_tracker.rest.dto.PasswordUpdateRequestDTO;
+import ba.edu.ibu.finance_tracker.rest.dto.UserCreateRequestDTO;
+import ba.edu.ibu.finance_tracker.rest.dto.UserDTO;
 import ba.edu.ibu.finance_tracker.rest.dto.UserSearchResultDTO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+
+import javax.management.RuntimeErrorException;
 
 @Service
 public class UserService {
@@ -19,56 +26,106 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User createUser(User user) {
-        return userRepository.save(user);
+    public UserDTO createUser(UserCreateRequestDTO userRequest) {
+        Optional<User> existingUser = userRepository.findByEmail(userRequest.getEmail());
+        if (existingUser.isPresent()) {
+            throw new RuntimeException("Email already exists");
+        }
+        User newUser = new User();
+        newUser.setName(userRequest.getName());
+        newUser.setSurname(userRequest.getSurname());
+        newUser.setEmail(userRequest.getEmail());
+        newUser.setPassword(userRequest.getPassword());
+        newUser.setBalance(userRequest.getBalance());
+        newUser.setParentId(userRequest.getParentId());
+
+        return new UserDTO(userRepository.save(newUser));
     }
 
     public void deleteUser(String id) {
-        userRepository.deleteById(id);
-    }
-
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
-    }
-
-    public User getById(String id) {
-        return userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
-    }
-
-    public User updateUserEmail(String id, String newEmail) {
-        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("Email not found"));
-
-        user.setEmail(newEmail);
-        return userRepository.save(user);
-    }
-
-    public User updateUserPassword(String id, String newPassword) {
-        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
-
-        user.setPassword(newPassword);
-        return userRepository.save(user);
+        Optional<User> user = userRepository.findById(id);
+        if (user.isPresent()) {
+            userRepository.delete(user.get());
+        } else {
+            throw new RuntimeException("User not found");
+        }
     }
 
     public User getUserById(String id) {
         return userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
     }
 
-    public User updateUserBalance(String id, double newBalance) {
-        User user = getUserById(id);
-        user.setBalance(newBalance);
-        return userRepository.save(user);
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 
-    public List<User> getChildrenByParentId(String parentId) {
-        return userRepository.findAllByParentId(parentId);
+    public EmailUpdateResponseDTO updateUserEmail(String id, String newEmail) {
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("ID not found"));
+
+        user.setEmail(newEmail);
+        User savedUser = userRepository.save(user);
+
+        return new EmailUpdateResponseDTO(savedUser.getId(), savedUser.getEmail());
+    }
+
+    public boolean updateUserPassword(PasswordUpdateRequestDTO request) {
+        User user = userRepository.findById(request.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!user.getPassword().equals(request.getOldPassword())) {
+            throw new RuntimeException("Old password does not match");
+        }
+
+        if (request.getNewPassword().equals(request.getOldPassword())) {
+            throw new RuntimeException("New password cannot be the same as the old password");
+        }
+
+        user.setPassword(request.getNewPassword());
+        userRepository.save(user);
+
+        return true;
+    }
+
+    public UserDTO updateUserBalance(String id, double newBalance) {
+        Optional<User> user = userRepository.findById(id);
+
+        if (user.isPresent()) {
+            user.get().setBalance(newBalance);
+            return new UserDTO(userRepository.save(user.get()));
+        } else {
+            throw new RuntimeException("User not found");
+        }
+    }
+
+    public List<UserDTO> getChildrenByParentId(String parentId) {
+        Optional<User> parent = userRepository.findById(parentId);
+
+        if (parent.isEmpty()) {
+            throw new RuntimeException("Parent not found");
+        }
+        return userRepository.findAllByParentId(parentId).stream().map(UserDTO::new).collect(Collectors.toList());
     }
 
     public boolean isChildOfParent(String childId, String parentId) {
-        User child = getUserById(childId);
-        return parentId.equals(child.getParentId());
+        Optional<User> child = userRepository.findById(childId);
+        Optional<User> parent = userRepository.findById(parentId);
+
+        if (parent.isEmpty()) {
+            throw new RuntimeException("Child or Parent not found");
+        } else if (child.isEmpty()) {
+            throw new RuntimeException("Child not found");
+        }
+
+        return parentId.equals(child.get().getParentId());
     }
 
     public List<User> getAllChildren(String parentId) {
+        Optional<User> parent = userRepository.findById(parentId);
+
+        if (parent.isEmpty()) {
+            throw new RuntimeException("Child or Parent not found");
+        }
+
         return userRepository.findAllByParentId(parentId);
     }
 
@@ -88,12 +145,8 @@ public class UserService {
     public String sendEmailToAllUsers(String message) {
         List<User> users = userRepository.findAll();
 
-        // Method 1: Using a specific implementation name
         return mailgunSender.send(users, message);
-        // return sendgridSender.send(users, message);
 
-        // Method 2: The appropriate implementation is decided based on configuration
-        // return mailSender.send(users, message);
     }
 
 }

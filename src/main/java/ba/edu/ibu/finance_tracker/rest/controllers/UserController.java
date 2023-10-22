@@ -2,6 +2,10 @@ package ba.edu.ibu.finance_tracker.rest.controllers;
 
 import ba.edu.ibu.finance_tracker.core.model.User;
 import ba.edu.ibu.finance_tracker.core.service.UserService;
+import ba.edu.ibu.finance_tracker.rest.dto.EmailUpdateResponseDTO;
+import ba.edu.ibu.finance_tracker.rest.dto.PasswordUpdateRequestDTO;
+import ba.edu.ibu.finance_tracker.rest.dto.UserCreateRequestDTO;
+import ba.edu.ibu.finance_tracker.rest.dto.UserDTO;
 import ba.edu.ibu.finance_tracker.rest.dto.UserSearchResultDTO;
 
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,8 +33,8 @@ public class UserController {
     }
 
     @PostMapping
-    public User createUser(@RequestBody User user) {
-        return userService.createUser(user);
+    public UserDTO createUser(@RequestBody UserCreateRequestDTO userRequest) {
+        return userService.createUser(userRequest);
     }
 
     @DeleteMapping("/{id}")
@@ -45,17 +49,22 @@ public class UserController {
 
     @GetMapping("/{id}")
     public User getById(@PathVariable String id) {
-        return userService.getById(id);
+        return userService.getUserById(id);
     }
 
     @PutMapping("/{id}/email")
-    public User updateEmail(@PathVariable String id, @RequestBody String newEmail) {
+    public EmailUpdateResponseDTO updateEmail(@PathVariable String id, @RequestBody String newEmail) {
         return userService.updateUserEmail(id, newEmail);
     }
 
-    @PutMapping("/{id}/password")
-    public User updatePassword(@PathVariable String id, @RequestBody String newPassword) {
-        return userService.updateUserPassword(id, newPassword);
+    @PutMapping("/password/update")
+    public ResponseEntity<String> updatePassword(@RequestBody PasswordUpdateRequestDTO passwordUpdateRequest) {
+        try {
+            userService.updateUserPassword(passwordUpdateRequest);
+            return new ResponseEntity<>("Password updated successfully", HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("/{id}/balance")
@@ -65,13 +74,18 @@ public class UserController {
     }
 
     @PutMapping("/{id}/balance")
-    public User updateUserBalance(@PathVariable String id, @RequestBody double newBalance) {
+    public UserDTO updateUserBalance(@PathVariable String id, @RequestBody double newBalance) {
         return userService.updateUserBalance(id, newBalance);
     }
 
     @GetMapping("/{parentId}/children")
-    public List<User> getAllChildren(@PathVariable String parentId) {
-        return userService.getAllChildren(parentId);
+    public List<UserDTO> getAllChildren(@PathVariable String parentId) {
+        return userService.getChildrenByParentId(parentId);
+    }
+
+    @GetMapping("/isChild")
+    public ResponseEntity<Boolean> isChildOfParent(@RequestParam String childId, @RequestParam String parentId) {
+        return ResponseEntity.ok(userService.isChildOfParent(childId, parentId));
     }
 
     @GetMapping("/search")
