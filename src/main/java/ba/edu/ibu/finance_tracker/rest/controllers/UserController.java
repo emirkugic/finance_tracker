@@ -43,6 +43,11 @@ public class UserController {
         return userService.getAllUsers();
     }
 
+    @GetMapping("/{id}")
+    public User getById(@PathVariable String id) {
+        return userService.getById(id);
+    }
+
     @PutMapping("/{id}/email")
     public User updateEmail(@PathVariable String id, @RequestBody String newEmail) {
         return userService.updateUserEmail(id, newEmail);

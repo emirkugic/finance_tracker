@@ -15,7 +15,7 @@ public class Expense {
     private String category;
     private String source;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SS")
-    private LocalDateTime expenseDate;
+    private LocalDateTime expenseDate = LocalDateTime.now();
     private boolean isTransferToChild;
     private String recipientChildId;
 

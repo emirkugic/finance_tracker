@@ -1,11 +1,25 @@
 
 configuration:
 
-  swagger:
-    app: 'FInance Management System'
-    description: 'A simple system built with Spring Boot'
-    developer: 'Emir Kugic'
-    email: 'emir.kugic@ibu.edu.ba'
-    
-  mailsender:
-    default: 'sendgrid'
+swagger:
+  app: 'FInance Management System'
+  description: 'A simple system built with Spring Boot'
+  developer: 'Emir Kugic'
+  email: 'emir.kugic@ibu.edu.ba'
+
+mailsender:
+  default: 'sendgrid'
+
+spring:
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: finance_tracker
+
+
+# spring:
+#   data:
+#     mongodb:
+#       uri: mongodb+srv://emirkugic:emirkugic@library-db.likfgjo.mongodb.net/?retryWrites=true&w=majority
+#       database: finance_tracker
