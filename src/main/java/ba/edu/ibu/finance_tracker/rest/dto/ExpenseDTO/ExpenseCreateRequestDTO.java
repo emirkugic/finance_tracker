@@ -1,47 +1,24 @@
-package ba.edu.ibu.finance_tracker.core.model;
+package ba.edu.ibu.finance_tracker.rest.dto.ExpenseDTO;
 
 import java.time.LocalDateTime;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-@Document
-public class Expense {
+import io.swagger.v3.oas.annotations.media.Schema;
 
-    @Id
-    private String id;
+public class ExpenseCreateRequestDTO {
+    @Schema(defaultValue = "emir")
     private String userId;
     private double amount;
+    @Schema(defaultValue = "Food")
     private String category;
+    @Schema(defaultValue = "Cash")
     private String source;
+    @Schema(defaultValue = "2023-10-22 20:42:25.41") // remind me to ask you for this bug im having with the date format
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SS")
     private LocalDateTime expenseDate;
-    private boolean isTransferToChild;
+    @Schema(defaultValue = "emirson")
     private String recipientChildId;
-
-    public boolean isTransferToChild() {
-        return isTransferToChild;
-    }
-
-    public void setTransferToChild(boolean isTransferToChild) {
-        this.isTransferToChild = isTransferToChild;
-    }
-
-    public String getRecipientChildId() {
-        return recipientChildId;
-    }
-
-    public void setRecipientChildId(String recipientChildId) {
-        this.recipientChildId = recipientChildId;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getUserId() {
         return userId;
@@ -82,5 +59,21 @@ public class Expense {
     public void setExpenseDate(LocalDateTime expenseDate) {
         this.expenseDate = expenseDate;
     }
+
+    public String getRecipientChildId() {
+        return recipientChildId;
+    }
+
+    public void setRecipientChildId(String recipientChildId) {
+        this.recipientChildId = recipientChildId;
+    }
+
+    // public Boolean getIsTransferToChild() {
+    // return isTransferToChild;
+    // }
+
+    // public void setIsTransferToChild(Boolean isTransferToChild) {
+    // this.isTransferToChild = isTransferToChild;
+    // }
 
 }

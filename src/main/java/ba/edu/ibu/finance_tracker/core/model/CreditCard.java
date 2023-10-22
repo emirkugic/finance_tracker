@@ -2,15 +2,11 @@ package ba.edu.ibu.finance_tracker.core.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Document
 public class CreditCard {
 
-    @JsonIgnore
     @Id
     private String id;
 

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ba.edu.ibu.finance_tracker.core.model.Expense;
 import ba.edu.ibu.finance_tracker.core.service.ExpenseService;
+import ba.edu.ibu.finance_tracker.rest.dto.ExpenseDTO.ExpenseCreateRequestDTO;
 
 @RestController
 @RequestMapping("/api/expenses")
@@ -24,9 +25,18 @@ public class ExpenseController {
         this.expenseService = expenseService;
     }
 
-    @PostMapping()
-    public Expense createExpense(@RequestBody Expense expense) {
-        return expenseService.createExpense(expense);
+    @PostMapping
+    public Expense createExpense(@RequestBody ExpenseCreateRequestDTO expenseRequest) {
+        Expense newExpense = new Expense();
+        newExpense.setUserId(expenseRequest.getUserId());
+        newExpense.setAmount(expenseRequest.getAmount());
+        newExpense.setCategory(expenseRequest.getCategory());
+        newExpense.setSource(expenseRequest.getSource());
+        newExpense.setExpenseDate(expenseRequest.getExpenseDate());
+        newExpense.setRecipientChildId(expenseRequest.getRecipientChildId());
+        // newExpense.setTransferToChild(expenseRequest.getIsTransferToChild());
+
+        return expenseService.createExpense(newExpense);
     }
 
     @DeleteMapping("/{id}")
@@ -49,10 +59,11 @@ public class ExpenseController {
         return expenseService.getAllExpensesByUserId(userId);
     }
 
-    @GetMapping("/parent/{parentId}")
-    public List<Expense> getAllExpensesByParentId(@PathVariable String parentId) {
-        return expenseService.getAllExpensesByParentId(parentId);
-    }
+    // @GetMapping("/parent/{parentId}")
+    // public List<Expense> getAllExpensesByParentId(@PathVariable String parentId)
+    // {
+    // return expenseService.getAllExpensesByParentId(parentId);
+    // }
 
     @PostMapping("/transfer/{parentId}/{childId}")
     public Expense transferToChild(@PathVariable String parentId, @PathVariable String childId,

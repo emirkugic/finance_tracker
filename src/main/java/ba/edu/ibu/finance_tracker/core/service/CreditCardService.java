@@ -7,6 +7,7 @@ import ba.edu.ibu.finance_tracker.core.model.CreditCard;
 import ba.edu.ibu.finance_tracker.core.model.User;
 import ba.edu.ibu.finance_tracker.core.repository.CreditCardRepository;
 import ba.edu.ibu.finance_tracker.core.repository.UserRepository;
+import ba.edu.ibu.finance_tracker.rest.dto.CreditCardDTO.CreditCardCreateRequestDTO;
 
 @Service
 public class CreditCardService {
@@ -19,7 +20,12 @@ public class CreditCardService {
         this.userRepository = userRepository;
     }
 
-    public String createCreditCard(CreditCard creditCard) {
+    public String createCreditCard(CreditCardCreateRequestDTO creditCardRequest) {
+        CreditCard creditCard = new CreditCard();
+        creditCard.setUserId(creditCardRequest.getUserId());
+        creditCard.setCardNumber(creditCardRequest.getCardNumber());
+        creditCard.setCardName(creditCardRequest.getCardName());
+
         Optional<User> user = userRepository.findById(creditCard.getUserId());
         if (user.isEmpty()) {
             throw new RuntimeException("User ID does not exist.");

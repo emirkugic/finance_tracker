@@ -2,28 +2,45 @@ package ba.edu.ibu.finance_tracker.core.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
+
+import javax.swing.text.html.Option;
 
 import org.springframework.stereotype.Service;
-
 import ba.edu.ibu.finance_tracker.core.model.Expense;
 import ba.edu.ibu.finance_tracker.core.model.User;
 import ba.edu.ibu.finance_tracker.core.repository.ExpenseRepository;
-import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.UserDTO;
+import ba.edu.ibu.finance_tracker.core.repository.UserRepository;
 
 @Service
 public class ExpenseService {
 
     private final ExpenseRepository expenseRepository;
     private final UserService userService;
+    private final UserRepository userRepository;
 
-    public ExpenseService(ExpenseRepository expenseRepository, UserService userService) {
+    public ExpenseService(ExpenseRepository expenseRepository, UserService userService, UserRepository userRepository) {
         this.expenseRepository = expenseRepository;
         this.userService = userService;
+        this.userRepository = userRepository;
     }
 
     public Expense createExpense(Expense expense) {
-        User user = userService.getUserById(expense.getUserId());
+        Optional<User> existingUser = userRepository.findById(expense.getUserId());
+        if (existingUser.isEmpty()) {
+            throw new RuntimeException("UserID doesn't exist");
+        }
+
+        if (expense.getRecipientChildId() != null) {
+            Optional<User> existingChild = userRepository.findById(expense.getRecipientChildId());
+            if (existingChild.isEmpty()) {
+                throw new RuntimeException("ChildID doesn't exist");
+            }
+        } else {
+            expense.setTransferToChild(false);
+        }
+
+        User user = existingUser.get();
         user.setBalance(user.getBalance() - expense.getAmount());
         userService.updateUserBalance(user.getId(), user.getBalance());
         if (expense.getExpenseDate() == null) {
@@ -33,12 +50,19 @@ public class ExpenseService {
     }
 
     public void deleteExpense(String id) {
+        Optional<User> existingUser = userRepository.findById(id);
+        if (existingUser.isEmpty()) {
+            throw new RuntimeException("UserID doesn't exist");
+        }
         expenseRepository.deleteById(id);
     }
 
     public Expense updateExpenseAmount(String id, double newAmount) {
+        Optional<User> existingUser = userRepository.findById(id);
+        if (existingUser.isEmpty()) {
+            throw new RuntimeException("UserID doesn't exist");
+        }
         Expense expenses = expenseRepository.findById(id).orElseThrow(() -> new RuntimeException("Expense not found"));
-
         expenses.setAmount(newAmount);
         return expenseRepository.save(expenses);
     }
@@ -48,18 +72,37 @@ public class ExpenseService {
     }
 
     public List<Expense> getAllExpensesByUserId(String userId) {
+        Optional<User> existingUser = userRepository.findById(userId);
+        if (existingUser.isEmpty()) {
+            throw new RuntimeException("UserID doesn't exist");
+        }
         return expenseRepository.findByUserId(userId);
     }
 
-    public List<Expense> getAllExpensesByParentId(String parentId) {
-        List<UserDTO> children = userService.getChildrenByParentId(parentId);
-        List<String> childrenIds = children.stream()
-                .map(UserDTO::getId)
-                .collect(Collectors.toList());
-        return expenseRepository.findByUserIdIn(childrenIds);
-    }
+    // ignore for now
+    // public List<Expense> getAllExpensesByParentId(String parentId) {
+    // Optional<User> existingUser = userRepository.findById(parentId);
+    // if (existingUser.isEmpty()) {
+    // throw new RuntimeException("UserID doesn't exist");
+    // }
+
+    // List<User> children = userService.getChildrenByParentId(parentId);
+    // List<String> childrenIds = children.stream()
+    // .map(User::getId)
+    // .collect(Collectors.toList());
+    // return expenseRepository.findByUserIdIn(childrenIds);
+    // }
 
     public Expense transferToChild(String parentId, String childId, double amount) {
+        Optional<User> existingUser = userRepository.findById(parentId);
+        if (existingUser.isEmpty()) {
+            throw new RuntimeException("ParentID doesn't exist");
+        }
+        Optional<User> existingChild = userRepository.findById(childId);
+        if (existingChild.isEmpty()) {
+            throw new RuntimeException("ChildID doesn't exist");
+        }
+
         User parent = userService.getUserById(parentId);
         User child = userService.getUserById(childId);
 
