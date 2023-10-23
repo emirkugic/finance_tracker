@@ -87,4 +87,12 @@ public class IncomeService {
         return incomeRepository.findByUserIdIn(childrenIds);
     }
 
+    public List<Income> getAllIncomesBetweenDates(String userId, Date startDate, Date endDate) {
+        Optional<User> existingUser = userRepository.findById(userId);
+        if (existingUser.isEmpty()) {
+            throw new RuntimeException("UserID doesn't exist");
+        }
+        return incomeRepository.findByUserIdAndReceivedDateBetween(userId, startDate, endDate);
+    }
+
 }

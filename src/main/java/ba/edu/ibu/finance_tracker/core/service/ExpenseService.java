@@ -127,4 +127,12 @@ public class ExpenseService {
         return expenseRepository.save(transferExpense);
     }
 
+    public List<Expense> getAllExpensesBetweenDates(String userId, Date startDate, Date endDate) {
+        Optional<User> existingUser = userRepository.findById(userId);
+        if (existingUser.isEmpty()) {
+            throw new RuntimeException("UserID doesn't exist");
+        }
+        return expenseRepository.findByUserIdAndExpenseDateBetween(userId, startDate, endDate);
+    }
+
 }

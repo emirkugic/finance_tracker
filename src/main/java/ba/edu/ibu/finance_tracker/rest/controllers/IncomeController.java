@@ -1,10 +1,13 @@
 package ba.edu.ibu.finance_tracker.rest.controllers;
 
+import java.util.Date;
 import java.util.List;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import ba.edu.ibu.finance_tracker.core.model.Expense;
 import ba.edu.ibu.finance_tracker.core.model.Income;
 import ba.edu.ibu.finance_tracker.core.service.IncomeService;
 import ba.edu.ibu.finance_tracker.rest.dto.IncomeDTO.IncomeCreateRequestDTO;
@@ -59,4 +62,12 @@ public class IncomeController {
     public List<Income> getAllIncomesByParentId(@PathVariable String parentId) {
         return incomeService.getAllIncomesByParentId(parentId);
     }
+
+    @GetMapping("getBetweenDates")
+    public List<Income> getAllExpenseBetweenDates(@RequestParam String userId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date endDate) {
+        return incomeService.getAllIncomesBetweenDates(userId, startDate, endDate);
+    }
+
 }
