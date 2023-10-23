@@ -2,12 +2,9 @@ package ba.edu.ibu.finance_tracker.rest.controllers;
 
 import java.util.Date;
 import java.util.List;
-
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import ba.edu.ibu.finance_tracker.core.model.Expense;
 import ba.edu.ibu.finance_tracker.core.model.Income;
 import ba.edu.ibu.finance_tracker.core.service.IncomeService;
 import ba.edu.ibu.finance_tracker.rest.dto.IncomeDTO.IncomeCreateRequestDTO;
