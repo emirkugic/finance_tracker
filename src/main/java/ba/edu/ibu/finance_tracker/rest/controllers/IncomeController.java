@@ -1,10 +1,13 @@
 package ba.edu.ibu.finance_tracker.rest.controllers;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import ba.edu.ibu.finance_tracker.core.model.Expense;
 import ba.edu.ibu.finance_tracker.core.model.Income;
 import ba.edu.ibu.finance_tracker.core.service.IncomeService;
 import ba.edu.ibu.finance_tracker.rest.dto.IncomeDTO.IncomeCreateRequestDTO;
@@ -60,11 +63,17 @@ public class IncomeController {
         return incomeService.getAllIncomesByParentId(parentId);
     }
 
-    @GetMapping("getBetweenDates")
-    public List<Income> getAllExpenseBetweenDates(@RequestParam String userId,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date startDate,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date endDate) {
+    @GetMapping("/getBetweenDates")
+    public List<Income> getAllIncomesBetweenDates(@RequestParam String userId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         return incomeService.getAllIncomesBetweenDates(userId, startDate, endDate);
+    }
+
+    @GetMapping("/getByDate")
+    public List<Income> getAllIncomesByDate(@RequestParam String userId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        return incomeService.getAllIncomesByDate(userId, date);
     }
 
 }

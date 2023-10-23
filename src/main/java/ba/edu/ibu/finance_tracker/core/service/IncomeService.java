@@ -1,11 +1,14 @@
 package ba.edu.ibu.finance_tracker.core.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
+
+import ba.edu.ibu.finance_tracker.core.model.Expense;
 import ba.edu.ibu.finance_tracker.core.model.Income;
 import ba.edu.ibu.finance_tracker.core.model.User;
 import ba.edu.ibu.finance_tracker.core.repository.IncomeRepository;
@@ -87,12 +90,28 @@ public class IncomeService {
         return incomeRepository.findByUserIdIn(childrenIds);
     }
 
-    public List<Income> getAllIncomesBetweenDates(String userId, Date startDate, Date endDate) {
+    public List<Income> getAllIncomesBetweenDates(String userId, LocalDate startDate, LocalDate endDate) {
         Optional<User> existingUser = userRepository.findById(userId);
         if (existingUser.isEmpty()) {
             throw new RuntimeException("UserID doesn't exist");
         }
-        return incomeRepository.findByUserIdAndReceivedDateBetween(userId, startDate, endDate);
+
+        LocalDateTime startOfStartDate = startDate.atStartOfDay();
+        LocalDateTime endOfEndDate = endDate.atTime(23, 59, 59, 999999999);
+
+        return incomeRepository.findByUserIdAndReceivedDateBetween(userId, startOfStartDate, endOfEndDate);
+    }
+
+    public List<Income> getAllIncomesByDate(String userId, LocalDate expenseDate) {
+        Optional<User> existingUser = userRepository.findById(userId);
+        if (existingUser.isEmpty()) {
+            throw new RuntimeException("UserID doesn't exist");
+        }
+
+        LocalDateTime startOfDay = expenseDate.atStartOfDay();
+        LocalDateTime endOfDay = startOfDay.plusDays(1).minusNanos(1);
+
+        return incomeRepository.findByUserIdAndReceivedDateBetween(userId, startOfDay, endOfDay);
     }
 
 }

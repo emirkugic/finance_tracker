@@ -1,5 +1,6 @@
 package ba.edu.ibu.finance_tracker.rest.controllers;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -78,11 +79,17 @@ public class ExpenseController {
         return expenseService.transferToChild(parentId, childId, amount);
     }
 
-    @GetMapping("getBetweenDates")
+    @GetMapping("/getBetweenDates")
     public List<Expense> getAllExpenseBetweenDates(@RequestParam String userId,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date startDate,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date endDate) {
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         return expenseService.getAllExpensesBetweenDates(userId, startDate, endDate);
+    }
+
+    @GetMapping("/getByDate")
+    public List<Expense> getAllExpenseByDate(@RequestParam String userId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        return expenseService.getAllExpensesByDate(userId, date);
     }
 
 }

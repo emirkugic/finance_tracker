@@ -1,5 +1,6 @@
 package ba.edu.ibu.finance_tracker.core.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
@@ -127,12 +128,29 @@ public class ExpenseService {
         return expenseRepository.save(transferExpense);
     }
 
-    public List<Expense> getAllExpensesBetweenDates(String userId, Date startDate, Date endDate) {
+    public List<Expense> getAllExpensesBetweenDates(String userId, LocalDate startDate, LocalDate endDate) {
         Optional<User> existingUser = userRepository.findById(userId);
         if (existingUser.isEmpty()) {
             throw new RuntimeException("UserID doesn't exist");
         }
-        return expenseRepository.findByUserIdAndExpenseDateBetween(userId, startDate, endDate);
+
+        LocalDateTime startOfStartDate = startDate.atStartOfDay();
+        LocalDateTime endOfEndDate = endDate.atTime(23, 59, 59, 999999999);
+
+        return expenseRepository.findByUserIdAndExpenseDateBetween(userId, startOfStartDate, endOfEndDate);
+    }
+
+    public List<Expense> getAllExpensesByDate(String userId, LocalDate expenseDate) {
+        Optional<User> existingUser = userRepository.findById(userId);
+        if (existingUser.isEmpty()) {
+            throw new RuntimeException("UserID doesn't exist");
+        }
+
+        LocalDateTime startOfDay = expenseDate.atStartOfDay();
+        LocalDateTime endOfDay = startOfDay.plusDays(1).minusNanos(1);
+
+        return expenseRepository.findByUserIdAndExpenseDateBetween(userId,
+                startOfDay, endOfDay);
     }
 
 }
