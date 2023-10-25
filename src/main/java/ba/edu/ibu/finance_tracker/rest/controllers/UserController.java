@@ -70,7 +70,7 @@ public class UserController {
     @GetMapping("/{id}/balance")
     public double getUserBalance(@PathVariable String id) {
         User user = userService.getUserById(id);
-        return user.getBalance();
+        return userService.getBalanceByUserId(user.getId());
     }
 
     @PutMapping("/{id}/balance")

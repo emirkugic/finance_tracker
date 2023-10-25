@@ -23,6 +23,18 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    @Autowired
+    private MailSender mailgunSender;
+    // @Autowired
+    // private MailSender sendgridSender;
+
+    public String sendEmailToAllUsers(String message) {
+        List<User> users = userRepository.findAll();
+
+        return mailgunSender.send(users, message);
+
+    }
+
     public UserDTO createUser(UserCreateRequestDTO userRequest) {
         Optional<User> existingUser = userRepository.findByEmail(userRequest.getEmail());
         if (existingUser.isPresent()) {
@@ -134,16 +146,14 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    @Autowired
-    private MailSender mailgunSender;
-    // @Autowired
-    // private MailSender sendgridSender;
+    public double getBalanceByUserId(String userId) {
+        Optional<User> user = userRepository.findById(userId);
 
-    public String sendEmailToAllUsers(String message) {
-        List<User> users = userRepository.findAll();
+        if (user.isEmpty()) {
+            throw new RuntimeException("User not found");
+        }
 
-        return mailgunSender.send(users, message);
-
+        return user.get().getBalance();
     }
 
 }

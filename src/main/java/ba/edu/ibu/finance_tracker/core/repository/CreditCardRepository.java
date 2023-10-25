@@ -15,6 +15,6 @@ public interface CreditCardRepository extends MongoRepository<CreditCard, String
 
     Optional<CreditCard> findByCardNumber(String cardNumber);
 
-    Optional<CreditCard> findByUserIdAndCardNumber(String userId, String cardNumber); // New method
+    Optional<CreditCard> findByUserIdAndCardNumber(String userId, String cardNumber);
 
 }

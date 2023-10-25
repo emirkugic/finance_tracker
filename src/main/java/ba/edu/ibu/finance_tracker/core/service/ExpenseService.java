@@ -46,6 +46,7 @@ public class ExpenseService {
         if (expense.getExpenseDate() == null) {
             expense.setExpenseDate(Date.from(LocalDateTime.now().atZone(java.time.ZoneId.systemDefault()).toInstant()));
         }
+
         expenseRepository.save(expense);
 
         return "Creating expense was successful";

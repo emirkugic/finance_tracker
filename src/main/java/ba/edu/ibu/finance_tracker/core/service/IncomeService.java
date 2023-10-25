@@ -35,6 +35,7 @@ public class IncomeService {
         User user = userService.getUserById(income.getUserId());
         user.setBalance(user.getBalance() + income.getAmount());
         userService.updateUserBalance(user.getId(), user.getBalance());
+
         if (income.getReceivedDate() == null) {
             income.setReceivedDate(Date.from(LocalDateTime.now().atZone(java.time.ZoneId.systemDefault()).toInstant()));
 
