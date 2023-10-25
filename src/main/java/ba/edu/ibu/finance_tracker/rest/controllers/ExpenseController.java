@@ -1,7 +1,6 @@
 package ba.edu.ibu.finance_tracker.rest.controllers;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
