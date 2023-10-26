@@ -70,4 +70,62 @@ public class CreditCardService {
         return creditCardRepository.findAllByUserId(userId);
     }
 
+    public double getBalanceByCardId(String cardId) {
+        CreditCard card = creditCardRepository.findById(cardId)
+                .orElseThrow(() -> new RuntimeException("CreditCard not found"));
+        return card.getBalance();
+    }
+
+    public void updateCardBalance(String cardId, double newBalance) {
+        CreditCard card = creditCardRepository.findById(cardId)
+                .orElseThrow(() -> new RuntimeException("CreditCard not found"));
+        card.setBalance(newBalance);
+        creditCardRepository.save(card);
+    }
+
+    // public double getBalanceByCreditCardIdAndUserId(@RequestParam String userId,
+    // @RequestParam String cardId) {
+    // double sum = 0;
+    // User user = userRepository.findById(userId)
+    // .orElseThrow(() -> new RuntimeException("User not found"));
+
+    // List<CreditCard> allCreditCards =
+    // creditCardRepository.findAllByUserId(userId); // user's cards balance
+    // for (CreditCard card : allCreditCards) {
+    // if (card.getId().equals(cardId)) {
+    // System.err.println("This is the for loop sum: " + sum);
+    // sum += card.getBalance(); // doesn't execute for some reason
+    // }
+    // }
+
+    // Optional<CreditCard> creditCard = creditCardRepository.findById(cardId);
+
+    // if (cardId.equals("cash")) {
+    // System.err.println(user.getBalance() - sum);
+    // System.err.println("user balance: " + user.getBalance() + "\nSame for loop
+    // sum: " + sum);
+    // return user.getBalance() - sum;
+    // } else
+    // return creditCard.get().getBalance();
+
+    // }
+
+    public double getBalanceByCreditCardIdAndUserId(String userId, String cardOrCashId) {
+        double totalCreditCardBalance = 0;
+        List<CreditCard> creditCards = getCreditCardsByUserId(userId);
+        for (CreditCard card : creditCards) {
+            totalCreditCardBalance += card.getBalance();
+        }
+
+        if ("cash".equalsIgnoreCase(cardOrCashId)) {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            return user.getBalance() - totalCreditCardBalance;
+        } else {
+            CreditCard card = creditCardRepository.findById(cardOrCashId)
+                    .orElseThrow(() -> new RuntimeException("CreditCard not found"));
+            return card.getBalance();
+        }
+    }
+
 }

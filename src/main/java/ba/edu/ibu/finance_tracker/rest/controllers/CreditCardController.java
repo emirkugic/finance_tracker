@@ -43,4 +43,9 @@ public class CreditCardController {
         return creditCardService.getCreditCardsByUserId(userId);
     }
 
+    @GetMapping("/balance/{userId}/{cardId}")
+    public double getCreditCardBalance(@PathVariable String userId, @PathVariable String cardId) {
+        return creditCardService.getBalanceByCreditCardIdAndUserId(userId, cardId);
+    }
+
 }

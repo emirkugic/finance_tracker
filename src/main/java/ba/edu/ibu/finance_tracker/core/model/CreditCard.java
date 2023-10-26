@@ -22,6 +22,17 @@ public class CreditCard {
     @Schema(defaultValue = "09-2024")
     private String expiryDate;
 
+    @Schema(defaultValue = "0")
+    private double balance;
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
+    }
+
     public String getId() {
         return id;
     }

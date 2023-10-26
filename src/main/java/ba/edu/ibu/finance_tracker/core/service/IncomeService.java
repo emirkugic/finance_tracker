@@ -7,8 +7,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
+
+import ba.edu.ibu.finance_tracker.core.model.CreditCard;
 import ba.edu.ibu.finance_tracker.core.model.Income;
 import ba.edu.ibu.finance_tracker.core.model.User;
+import ba.edu.ibu.finance_tracker.core.repository.CreditCardRepository;
 import ba.edu.ibu.finance_tracker.core.repository.IncomeRepository;
 import ba.edu.ibu.finance_tracker.core.repository.UserRepository;
 import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.UserDTO;
@@ -19,11 +22,17 @@ public class IncomeService {
     private final IncomeRepository incomeRepository;
     private final UserService userService;
     private final UserRepository userRepository;
+    private final CreditCardRepository creditCardRepository;
+    private final CreditCardService creditCardService;
 
-    public IncomeService(IncomeRepository incomeRepository, UserService userService, UserRepository userRepository) {
+    public IncomeService(IncomeRepository incomeRepository, UserService userService, UserRepository userRepository,
+            CreditCardRepository creditCardRepository, CreditCardService creditCardService) {
         this.incomeRepository = incomeRepository;
         this.userService = userService;
         this.userRepository = userRepository;
+        this.creditCardRepository = creditCardRepository;
+        this.creditCardService = creditCardService;
+
     }
 
     public Income createIncome(Income income) {
@@ -33,12 +42,22 @@ public class IncomeService {
         }
 
         User user = userService.getUserById(income.getUserId());
-        user.setBalance(user.getBalance() + income.getAmount());
-        userService.updateUserBalance(user.getId(), user.getBalance());
 
         if (income.getReceivedDate() == null) {
             income.setReceivedDate(Date.from(LocalDateTime.now().atZone(java.time.ZoneId.systemDefault()).toInstant()));
 
+        }
+
+        if ("cash".equalsIgnoreCase(income.getReceivedThrough())) {
+            user.setBalance(user.getBalance() + income.getAmount());
+            userService.updateUserBalance(user.getId(), user.getBalance());
+        } else {
+            user.setBalance(user.getBalance() + income.getAmount());
+            userService.updateUserBalance(user.getId(), user.getBalance());
+            CreditCard card = creditCardRepository.findById(income.getReceivedThrough())
+                    .orElseThrow(() -> new RuntimeException("CreditCard not found"));
+            card.setBalance(card.getBalance() + income.getAmount());
+            creditCardService.updateCardBalance(card.getId(), card.getBalance());
         }
         return incomeRepository.save(income);
     }
