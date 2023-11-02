@@ -49,8 +49,6 @@ public class ExpenseService {
         }
 
         User user = existingUser.get();
-        user.setBalance(user.getBalance() - expense.getAmount());
-        userService.updateUserBalance(user.getId(), user.getBalance());
         if (expense.getExpenseDate() == null) {
             expense.setExpenseDate(Date.from(LocalDateTime.now().atZone(java.time.ZoneId.systemDefault()).toInstant()));
         }
@@ -101,20 +99,6 @@ public class ExpenseService {
         return expenseRepository.findByUserId(userId);
     }
 
-    // ignore for now
-    // public List<Expense> getAllExpensesByParentId(String parentId) {
-    // Optional<User> existingUser = userRepository.findById(parentId);
-    // if (existingUser.isEmpty()) {
-    // throw new RuntimeException("UserID doesn't exist");
-    // }
-
-    // List<User> children = userService.getChildrenByParentId(parentId);
-    // List<String> childrenIds = children.stream()
-    // .map(User::getId)
-    // .collect(Collectors.toList());
-    // return expenseRepository.findByUserIdIn(childrenIds);
-    // }
-
     public Expense transferToChild(String parentId, String childId, double amount) {
         Optional<User> existingUser = userRepository.findById(parentId);
         if (existingUser.isEmpty()) {
@@ -127,10 +111,6 @@ public class ExpenseService {
 
         User parent = userService.getUserById(parentId);
         User child = userService.getUserById(childId);
-
-        // if (parent.getBalance() < amount) {
-        // throw new RuntimeException("Insufficient balance");
-        // }
 
         parent.setBalance(parent.getBalance() - amount);
         child.setBalance(child.getBalance() + amount);
@@ -184,9 +164,9 @@ public class ExpenseService {
                 userService.updateUserBalance(user.getId(), user.getBalance());
             } else {
                 double remainingExpense = expenseAmount - user.getBalance();
-                user.setBalance(0); // Set the cash balance to 0
+                user.setBalance(0);
                 userService.updateUserBalance(user.getId(), user.getBalance());
-                deductFromCreditCards(userId, remainingExpense); // Deduct the remaining expense from credit cards
+                deductFromCreditCards(userId, remainingExpense);
             }
         } else {
             CreditCard card = creditCardRepository.findById(source)
@@ -195,17 +175,17 @@ public class ExpenseService {
             if (card.getBalance() >= expenseAmount) {
                 card.setBalance(card.getBalance() - expenseAmount);
                 creditCardService.updateCardBalance(card.getId(), card.getBalance());
-                user.setBalance(user.getBalance() - expenseAmount); // Deducting the amount from user's total balance
+                user.setBalance(user.getBalance() - expenseAmount);
                 userService.updateUserBalance(user.getId(), user.getBalance());
             } else {
                 double remainingExpense = expenseAmount - card.getBalance();
-                card.setBalance(0); // Set the card balance to 0
+                card.setBalance(0);
                 creditCardService.updateCardBalance(card.getId(), card.getBalance());
-                user.setBalance(user.getBalance() - (expenseAmount - remainingExpense)); // Deducting the amount from
-                                                                                         // user's total balance
+                user.setBalance(user.getBalance() - (expenseAmount - remainingExpense));
+
                 userService.updateUserBalance(user.getId(), user.getBalance());
-                deductFromCreditCards(userId, remainingExpense); // Deduct the remaining expense from other credit cards
-                if (remainingExpense > 0) { // If there's still remaining expense after deducting from cards
+                deductFromCreditCards(userId, remainingExpense);
+                if (remainingExpense > 0) {
                     user.setBalance(user.getBalance() - remainingExpense);
                     userService.updateUserBalance(user.getId(), user.getBalance());
                 }
@@ -213,8 +193,6 @@ public class ExpenseService {
         }
     }
 
-    // Modify the deductFromCreditCards method to correctly update the total user
-    // balance when deducting from credit cards.
     private void deductFromCreditCards(String userId, double expenseAmount) {
         List<CreditCard> cards = creditCardRepository.findAllByUserId(userId);
         User user = userRepository.findById(userId)
