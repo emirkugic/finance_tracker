@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,16 +32,7 @@ public class ExpenseController {
 
     @PostMapping
     public ResponseEntity<String> createExpense(@RequestBody ExpenseCreateRequestDTO expenseRequest) {
-        Expense newExpense = new Expense();
-        newExpense.setUserId(expenseRequest.getUserId());
-        newExpense.setAmount(expenseRequest.getAmount());
-        newExpense.setCategory(expenseRequest.getCategory());
-        newExpense.setSource(expenseRequest.getSource());
-        newExpense.setExpenseDate(expenseRequest.getExpenseDate());
-        newExpense.setRecipientChildId(expenseRequest.getRecipientChildId());
-
-        String response = expenseService.createExpense(newExpense);
-
+        String response = expenseService.createExpense(expenseRequest);
         return ResponseEntity.ok(response);
     }
 
@@ -67,12 +57,6 @@ public class ExpenseController {
         return expenseService.getAllExpensesByUserId(userId);
     }
 
-    // @GetMapping("/parent/{parentId}")
-    // public List<Expense> getAllExpensesByParentId(@PathVariable String parentId)
-    // {
-    // return expenseService.getAllExpensesByParentId(parentId);
-    // }
-
     @PostMapping("/transfer/{parentId}/{childId}")
     public Expense transferToChild(@PathVariable String parentId, @PathVariable String childId,
             @RequestBody double amount) {
@@ -90,17 +74,6 @@ public class ExpenseController {
     public List<Expense> getAllExpenseByDate(@RequestParam String userId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         return expenseService.getAllExpensesByDate(userId, date);
-    }
-
-    @PostMapping("/expense/{userId}/{source}")
-    public ResponseEntity<String> registerExpense(@PathVariable String userId, @RequestBody double amount,
-            @PathVariable String source) {
-        try {
-            expenseService.registerExpense(userId, amount, source);
-            return new ResponseEntity<>("Expense registered successfully.", HttpStatus.OK);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
     }
 
 }

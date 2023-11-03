@@ -13,6 +13,7 @@ import ba.edu.ibu.finance_tracker.core.model.User;
 import ba.edu.ibu.finance_tracker.core.repository.CreditCardRepository;
 import ba.edu.ibu.finance_tracker.core.repository.ExpenseRepository;
 import ba.edu.ibu.finance_tracker.core.repository.UserRepository;
+import ba.edu.ibu.finance_tracker.rest.dto.ExpenseDTO.ExpenseCreateRequestDTO;
 
 @Service
 public class ExpenseService {
@@ -32,40 +33,98 @@ public class ExpenseService {
         this.creditCardRepository = creditCardRepository;
     }
 
-    public String createExpense(Expense expense) {
-        Optional<User> existingUser = userRepository.findById(expense.getUserId());
+    public String createExpense(ExpenseCreateRequestDTO expenseDTO) {
+        Optional<User> existingUser = userRepository.findById(expenseDTO.getUserId());
         if (existingUser.isEmpty()) {
             throw new RuntimeException("UserID doesn't exist");
         }
 
-        if (expense.getRecipientChildId() != null) {
-            Optional<User> existingChild = userRepository.findById(expense.getRecipientChildId());
-            if (existingChild.isEmpty()) {
-                throw new RuntimeException("ChildID doesn't exist");
-            }
-            expense.setTransferToChild(true);
-        } else {
-            expense.setTransferToChild(false);
-        }
-
         User user = existingUser.get();
-        if (expense.getExpenseDate() == null) {
-            expense.setExpenseDate(Date.from(LocalDateTime.now().atZone(java.time.ZoneId.systemDefault()).toInstant()));
-        }
+        Date expenseDate = expenseDTO.getExpenseDate() != null ? expenseDTO.getExpenseDate()
+                : Date.from(LocalDateTime.now().atZone(java.time.ZoneId.systemDefault()).toInstant());
 
-        if ("cash".equalsIgnoreCase(expense.getSource())) {
-            user.setBalance(user.getBalance() - expense.getAmount());
-            userService.updateUserBalance(user.getId(), user.getBalance());
+        Expense expense = new Expense();
+        expense.setUserId(expenseDTO.getUserId());
+        expense.setAmount(expenseDTO.getAmount());
+        expense.setCategory(expenseDTO.getCategory());
+        expense.setSource(expenseDTO.getSource());
+        expense.setExpenseDate(expenseDate);
+        expense.setRecipientChildId(expenseDTO.getRecipientChildId());
+        expense.setTransferToChild(expenseDTO.getRecipientChildId() != null);
+
+        String source = expense.getSource(); // this is the credit card id
+        double expenseAmount = expense.getAmount();
+
+        double totalCreditCardBalance = creditCardService.getTotalCreditCardBalance(user.getId()); // Get the total
+                                                                                                   // balance of all
+                                                                                                   // credit cards
+                                                                                                   // for this user.
+
+        double actualCashAvailable = user.getBalance() - totalCreditCardBalance; // This is the actual cash available to
+                                                                                 // the user. uses this formula:
+                                                                                 // cash = user.getBalance -
+                                                                                 // totalCreditCardBalance
+
+        // Deduct expense from cash or credit card
+        if ("cash".equalsIgnoreCase(source)) {
+            if (actualCashAvailable >= expenseAmount) {
+                // Deduct from cash if sufficient funds are available
+                user.setBalance(user.getBalance() - expenseAmount);
+            } else {
+                // Deduct from cash and possibly from credit cards
+                double remainingExpense = expenseAmount - actualCashAvailable;
+                user.setBalance(user.getBalance() - actualCashAvailable);
+                double totalDeductedFromCards = deductFromCreditCards(user.getId(), remainingExpense);
+                // Deduct any remaining expense from the user's balance, potentially going
+                // negative
+                user.setBalance(user.getBalance() - totalDeductedFromCards);
+            }
         } else {
-            CreditCard card = creditCardRepository.findById(expense.getSource())
+            // Charge to a specific credit card
+            CreditCard card = creditCardRepository.findById(source)
                     .orElseThrow(() -> new RuntimeException("CreditCard not found"));
-            card.setBalance(card.getBalance() - expense.getAmount());
+
+            double remainingExpense = expenseAmount;
+            if (card.getBalance() >= expenseAmount) {
+                // Deduct from the card balance if it can cover the expense
+                card.setBalance(card.getBalance() - expenseAmount);
+            } else {
+                // Deduct whatever is available from the card and then from other cards
+                remainingExpense -= card.getBalance();
+                card.setBalance(0);
+                double totalDeductedFromOtherCards = deductFromCreditCards(user.getId(), remainingExpense);
+                remainingExpense -= totalDeductedFromOtherCards;
+            }
             creditCardService.updateCardBalance(card.getId(), card.getBalance());
+            // Reduce the user's balance by the expense amount, potentially going negative
+            user.setBalance(user.getBalance() - expenseAmount);
         }
 
+        // Update the user balance and save the expense
+        userService.updateUserBalance(user.getId(), user.getBalance());
         expenseRepository.save(expense);
 
         return "Creating expense was successful";
+    }
+
+    private double deductFromCreditCards(String userId, double remainingExpense) {
+        List<CreditCard> cards = creditCardRepository.findAllByUserId(userId);
+        double totalDeducted = 0; // Track the total amount deducted from credit cards
+
+        for (CreditCard card : cards) {
+            if (remainingExpense <= 0)
+                break; // Exit early if there's no expense left
+
+            double availableBalance = card.getBalance();
+            double deduction = Math.min(remainingExpense, availableBalance);
+            card.setBalance(availableBalance - deduction);
+            totalDeducted += deduction;
+            remainingExpense -= deduction;
+
+            creditCardService.updateCardBalance(card.getId(), card.getBalance());
+        }
+
+        return totalDeducted;
     }
 
     public void deleteExpense(String id) {
@@ -150,69 +209,6 @@ public class ExpenseService {
 
         return expenseRepository.findByUserIdAndExpenseDateBetween(userId,
                 startOfDay, endOfDay);
-    }
-
-    // this subtracts from users cards until it reaches 0, then it subtracts from
-    // cash, vice versa for cash
-    public void registerExpense(String userId, double expenseAmount, String source) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        if ("cash".equalsIgnoreCase(source)) {
-            if (user.getBalance() >= expenseAmount) {
-                user.setBalance(user.getBalance() - expenseAmount);
-                userService.updateUserBalance(user.getId(), user.getBalance());
-            } else {
-                double remainingExpense = expenseAmount - user.getBalance();
-                user.setBalance(0);
-                userService.updateUserBalance(user.getId(), user.getBalance());
-                deductFromCreditCards(userId, remainingExpense);
-            }
-        } else {
-            CreditCard card = creditCardRepository.findById(source)
-                    .orElseThrow(() -> new RuntimeException("CreditCard not found"));
-
-            if (card.getBalance() >= expenseAmount) {
-                card.setBalance(card.getBalance() - expenseAmount);
-                creditCardService.updateCardBalance(card.getId(), card.getBalance());
-                user.setBalance(user.getBalance() - expenseAmount);
-                userService.updateUserBalance(user.getId(), user.getBalance());
-            } else {
-                double remainingExpense = expenseAmount - card.getBalance();
-                card.setBalance(0);
-                creditCardService.updateCardBalance(card.getId(), card.getBalance());
-                user.setBalance(user.getBalance() - (expenseAmount - remainingExpense));
-
-                userService.updateUserBalance(user.getId(), user.getBalance());
-                deductFromCreditCards(userId, remainingExpense);
-                if (remainingExpense > 0) {
-                    user.setBalance(user.getBalance() - remainingExpense);
-                    userService.updateUserBalance(user.getId(), user.getBalance());
-                }
-            }
-        }
-    }
-
-    private void deductFromCreditCards(String userId, double expenseAmount) {
-        List<CreditCard> cards = creditCardRepository.findAllByUserId(userId);
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        for (CreditCard card : cards) {
-            if (card.getBalance() >= expenseAmount) {
-                card.setBalance(card.getBalance() - expenseAmount);
-                user.setBalance(user.getBalance() - expenseAmount);
-                creditCardService.updateCardBalance(card.getId(), card.getBalance());
-                userService.updateUserBalance(user.getId(), user.getBalance());
-                return;
-            } else {
-                expenseAmount -= card.getBalance();
-                user.setBalance(user.getBalance() - card.getBalance());
-                card.setBalance(0);
-                creditCardService.updateCardBalance(card.getId(), card.getBalance());
-                userService.updateUserBalance(user.getId(), user.getBalance());
-            }
-        }
     }
 
 }

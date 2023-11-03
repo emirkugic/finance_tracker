@@ -48,4 +48,8 @@ public class CreditCardController {
         return creditCardService.getBalanceByCreditCardIdAndUserId(userId, cardId);
     }
 
+    @GetMapping("/{userId}/total-cards-balances")
+    public double getCreditCardBalance(@PathVariable String userId) {
+        return creditCardService.getTotalCreditCardBalance(userId);
+    }
 }

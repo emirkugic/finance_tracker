@@ -128,4 +128,13 @@ public class CreditCardService {
         }
     }
 
+    public double getTotalCreditCardBalance(String userId) {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isEmpty()) {
+            throw new RuntimeException("User not found");
+        }
+        List<CreditCard> cards = creditCardRepository.findAllByUserId(userId);
+        return cards.stream().mapToDouble(CreditCard::getBalance).sum();
+    }
+
 }
