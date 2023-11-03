@@ -55,49 +55,11 @@ public class ExpenseService {
         String source = expense.getSource(); // this is the credit card id
         double expenseAmount = expense.getAmount();
 
-        double totalCreditCardBalance = creditCardService.getTotalCreditCardBalance(user.getId()); // Get the total
-                                                                                                   // balance of all
-                                                                                                   // credit cards
-                                                                                                   // for this user.
-
-        double actualCashAvailable = user.getBalance() - totalCreditCardBalance; // This is the actual cash available to
-                                                                                 // the user. uses this formula:
-                                                                                 // cash = user.getBalance -
-                                                                                 // totalCreditCardBalance
-
         // Deduct expense from cash or credit card
-        if ("cash".equalsIgnoreCase(source)) {
-            if (actualCashAvailable >= expenseAmount) {
-                // Deduct from cash if sufficient funds are available
-                user.setBalance(user.getBalance() - expenseAmount);
-            } else {
-                // Deduct from cash and possibly from credit cards
-                double remainingExpense = expenseAmount - actualCashAvailable;
-                user.setBalance(user.getBalance() - actualCashAvailable);
-                double totalDeductedFromCards = deductFromCreditCards(user.getId(), remainingExpense);
-                // Deduct any remaining expense from the user's balance, potentially going
-                // negative
-                user.setBalance(user.getBalance() - totalDeductedFromCards);
-            }
+        if (source.equalsIgnoreCase("cash")) {
+            handleCashExpense(user, expenseAmount);
         } else {
-            // Charge to a specific credit card
-            CreditCard card = creditCardRepository.findById(source)
-                    .orElseThrow(() -> new RuntimeException("CreditCard not found"));
-
-            double remainingExpense = expenseAmount;
-            if (card.getBalance() >= expenseAmount) {
-                // Deduct from the card balance if it can cover the expense
-                card.setBalance(card.getBalance() - expenseAmount);
-            } else {
-                // Deduct whatever is available from the card and then from other cards
-                remainingExpense -= card.getBalance();
-                card.setBalance(0);
-                double totalDeductedFromOtherCards = deductFromCreditCards(user.getId(), remainingExpense);
-                remainingExpense -= totalDeductedFromOtherCards;
-            }
-            creditCardService.updateCardBalance(card.getId(), card.getBalance());
-            // Reduce the user's balance by the expense amount, potentially going negative
-            user.setBalance(user.getBalance() - expenseAmount);
+            handleCardExpense(user, source, expenseAmount);
         }
 
         // Update the user balance and save the expense
@@ -105,26 +67,6 @@ public class ExpenseService {
         expenseRepository.save(expense);
 
         return "Creating expense was successful";
-    }
-
-    private double deductFromCreditCards(String userId, double remainingExpense) {
-        List<CreditCard> cards = creditCardRepository.findAllByUserId(userId);
-        double totalDeducted = 0; // Track the total amount deducted from credit cards
-
-        for (CreditCard card : cards) {
-            if (remainingExpense <= 0)
-                break; // Exit early if there's no expense left
-
-            double availableBalance = card.getBalance();
-            double deduction = Math.min(remainingExpense, availableBalance);
-            card.setBalance(availableBalance - deduction);
-            totalDeducted += deduction;
-            remainingExpense -= deduction;
-
-            creditCardService.updateCardBalance(card.getId(), card.getBalance());
-        }
-
-        return totalDeducted;
     }
 
     public void deleteExpense(String id) {
@@ -209,6 +151,64 @@ public class ExpenseService {
 
         return expenseRepository.findByUserIdAndExpenseDateBetween(userId,
                 startOfDay, endOfDay);
+    }
+
+    // helper methods used in createExpense()
+
+    private void handleCashExpense(User user, double expenseAmount) {
+        double totalCreditCardBalance = creditCardService.getTotalCreditCardBalance(user.getId()); // Get the total
+                                                                                                   // balance of all
+                                                                                                   // credit cards
+                                                                                                   // for this user.
+        double actualCashAvailable = user.getBalance() - totalCreditCardBalance; // This is the actual cash available to
+                                                                                 // the user. uses this formula:
+                                                                                 // cash = user.getBalance -
+                                                                                 // totalCreditCardBalance
+        // Deduct from cash if sufficient funds are available
+        if (actualCashAvailable >= expenseAmount) {
+            user.setBalance(user.getBalance() - expenseAmount);
+        } else {
+            double remainingExpense = expenseAmount - actualCashAvailable;
+            user.setBalance(user.getBalance() - actualCashAvailable); // Spend all cash available
+            double totalDeductedFromCards = deductFromCreditCards(user.getId(), remainingExpense);
+            user.setBalance(user.getBalance() - totalDeductedFromCards); // Deduct remaining expense from credit cards
+        }
+    }
+
+    private double deductFromCreditCards(String userId, double remainingExpense) {
+        List<CreditCard> cards = creditCardRepository.findAllByUserId(userId);
+        double totalDeducted = 0; // Track the total amount deducted from credit cards
+
+        for (CreditCard card : cards) {
+            if (remainingExpense <= 0)
+                break; // Exit early if there's no expense left
+
+            double availableBalance = card.getBalance();
+            double deduction = Math.min(remainingExpense, availableBalance);
+            card.setBalance(availableBalance - deduction);
+            totalDeducted += deduction;
+            remainingExpense -= deduction;
+
+            creditCardService.updateCardBalance(card.getId(), card.getBalance());
+        }
+
+        return totalDeducted;
+    }
+
+    private void handleCardExpense(User user, String cardId, double expenseAmount) {
+        CreditCard card = creditCardRepository.findById(cardId)
+                .orElseThrow(() -> new RuntimeException("CreditCard not found"));
+        double remainingExpense = expenseAmount;
+
+        if (card.getBalance() >= expenseAmount) {
+            card.setBalance(card.getBalance() - expenseAmount);
+        } else {
+            remainingExpense -= card.getBalance();
+            card.setBalance(0); // Max out the card
+            remainingExpense -= deductFromCreditCards(user.getId(), remainingExpense);
+        }
+        creditCardService.updateCardBalance(card.getId(), card.getBalance());
+        user.setBalance(user.getBalance() - expenseAmount); // Reduce user balance by expense amount
     }
 
 }
