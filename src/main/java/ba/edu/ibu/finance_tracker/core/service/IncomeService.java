@@ -150,4 +150,13 @@ public class IncomeService {
         return incomeRepository.findByUserIdAndReceivedThroughIgnoreCase(userId, receivedThrough);
     }
 
+    public List<Income> getAllByFrom(String userId, String from) {
+        Optional<User> existingUser = userRepository.findById(userId);
+        if (existingUser.isEmpty()) {
+            throw new RuntimeException("UserID doesn't exist");
+        }
+
+        return incomeRepository.findByUserIdAndFromIgnoreCase(userId, from);
+    }
+
 }

@@ -82,4 +82,9 @@ public class IncomeController {
     public List<Income> getByReceivedThrough(@RequestParam String userId, @RequestParam String receivedThrough) {
         return incomeService.getAllByReceivedThrough(userId, receivedThrough);
     }
+
+    @GetMapping("/getByFrom")
+    public List<Income> getByFrom(@RequestParam String userId, @RequestParam String from) {
+        return incomeService.getAllByFrom(userId, from);
+    }
 }
