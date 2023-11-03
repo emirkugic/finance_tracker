@@ -81,4 +81,9 @@ public class ExpenseController {
         return expenseService.getAllExpensesByCategory(userId, category);
     }
 
+    @GetMapping("/getBySource")
+    public List<Expense> getAllBySource(@RequestParam String userId, @RequestParam String source) {
+        return expenseService.getExpensesBySource(userId, source);
+    }
+
 }
