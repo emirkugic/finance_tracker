@@ -132,4 +132,13 @@ public class IncomeService {
         return incomeRepository.findByUserIdAndReceivedDateBetween(userId, startOfDay, endOfDay);
     }
 
+    public List<Income> getAllBySource(String userId, String source) {
+        Optional<User> existingUser = userRepository.findById(userId);
+        if (existingUser.isEmpty()) {
+            throw new RuntimeException("UserID doesn't exist");
+        }
+
+        return incomeRepository.findByUserIdAndSourceIgnoreCase(userId, source);
+    }
+
 }

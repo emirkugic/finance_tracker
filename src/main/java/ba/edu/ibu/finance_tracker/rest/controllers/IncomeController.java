@@ -73,4 +73,9 @@ public class IncomeController {
         return incomeService.getAllIncomesByDate(userId, date);
     }
 
+    @GetMapping("/getBySource")
+    public List<Income> getBySource(@RequestParam String userId, @RequestParam String source) {
+        return incomeService.getAllBySource(userId, source);
+    }
+
 }

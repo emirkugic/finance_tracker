@@ -16,4 +16,9 @@ public interface IncomeRepository extends MongoRepository<Income, String> {
 
     List<Income> findByUserIdAndReceivedDateBetween(String userId, LocalDateTime start, LocalDateTime end);
 
+    List<Income> findByUserIdAndSourceIgnoreCase(String userId, String category);
+
+    List<Income> findByUserIdAndReceivedThroughIgnoreCase(String userId, String category);
+
+    List<Income> findByUserIdAndFromIgnoreCase(String userId, String category);
 }
