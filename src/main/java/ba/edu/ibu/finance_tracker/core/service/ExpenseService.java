@@ -153,6 +153,14 @@ public class ExpenseService {
                 startOfDay, endOfDay);
     }
 
+    public List<Expense> getAllExpensesByCategory(String userId, String category) {
+        Optional<User> existingUser = userRepository.findById(userId);
+        if (existingUser.isEmpty()) {
+            throw new RuntimeException("UserID doesn't exist");
+        }
+        return expenseRepository.findByUserIdAndCategoryIgnoreCase(userId, category);
+    }
+
     // helper methods used in createExpense()
 
     private void handleCashExpense(User user, double expenseAmount) {
