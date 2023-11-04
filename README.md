@@ -1,5 +1,5 @@
 # Personal Finance Tracker
 
-## Backend with springboot
+## Backend with Spring boot
 
 WIP for web eng course
