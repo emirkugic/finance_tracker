@@ -19,4 +19,5 @@ public interface ExpenseRepository extends MongoRepository<Expense, String> {
     List<Expense> findByUserIdAndCategoryIgnoreCase(String userId, String category);
 
     List<Expense> findByUserIdAndSourceIgnoreCase(String userId, String source);
+
 }

@@ -2,9 +2,12 @@ package ba.edu.ibu.finance_tracker.core.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
+
 import org.springframework.stereotype.Service;
 
 import ba.edu.ibu.finance_tracker.core.model.CreditCard;
@@ -167,6 +170,41 @@ public class ExpenseService {
             throw new RuntimeException("UserID doesn't exist");
         }
         return expenseRepository.findByUserIdAndSourceIgnoreCase(userId, source);
+    }
+
+    public double getSumAmountByCategoryOrSourceAndDateRange(
+            String userId,
+            Optional<String> category,
+            Optional<String> source,
+            Optional<LocalDate> startDate,
+            Optional<LocalDate> endDate) {
+
+        Optional<User> existingUser = userRepository.findById(userId);
+        if (existingUser.isEmpty()) {
+            throw new RuntimeException("UserID doesn't exist");
+        }
+
+        // If startDate or endDate is not provided, use default values
+        LocalDateTime startDateTime = startDate.orElse(LocalDate.of(2020, 1, 1)).atStartOfDay();
+        LocalDateTime endDateTime = endDate.orElse(LocalDate.now().plusYears(100)).atTime(23, 59, 59, 999999999);
+
+        // Convert LocalDateTime to Date
+        Date start = Date.from(startDateTime.atZone(ZoneId.systemDefault()).toInstant());
+        Date end = Date.from(endDateTime.atZone(ZoneId.systemDefault()).toInstant());
+
+        List<Expense> expenses = expenseRepository.findByUserIdAndExpenseDateBetween(userId, start, end);
+
+        // Apply the category and/or source filters if they are present
+        Stream<Expense> filteredExpenses = expenses.stream();
+        if (category.isPresent()) {
+            filteredExpenses = filteredExpenses
+                    .filter(expense -> expense.getCategory().equalsIgnoreCase(category.get()));
+        }
+        if (source.isPresent()) {
+            filteredExpenses = filteredExpenses.filter(expense -> expense.getSource().equalsIgnoreCase(source.get()));
+        }
+
+        return filteredExpenses.mapToDouble(Expense::getAmount).sum();
     }
 
     // helper methods used in createExpense()
