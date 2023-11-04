@@ -92,7 +92,7 @@ public class IncomeController {
     }
 
     @GetMapping("/amountSumBySourceOrReceivedThroughOrFrom")
-    public double getSumByCriteriaAndDateRange(
+    public double getAmountSumBySourceOrReceivedThroughOrFrom(
             @RequestParam String userId,
             @RequestParam Optional<String> source,
             @RequestParam Optional<String> receivedThrough,
