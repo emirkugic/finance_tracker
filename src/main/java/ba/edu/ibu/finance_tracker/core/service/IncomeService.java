@@ -2,10 +2,13 @@ package ba.edu.ibu.finance_tracker.core.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.springframework.stereotype.Service;
 
 import ba.edu.ibu.finance_tracker.core.model.CreditCard;
@@ -157,6 +160,45 @@ public class IncomeService {
         }
 
         return incomeRepository.findByUserIdAndFromIgnoreCase(userId, from);
+    }
+
+    public double getSumIncomeByCriteriaAndDateRange(
+            String userId,
+            Optional<String> source,
+            Optional<String> receivedThrough,
+            Optional<String> from,
+            Optional<LocalDate> startDate,
+            Optional<LocalDate> endDate) {
+
+        Optional<User> existingUser = userRepository.findById(userId);
+        if (existingUser.isEmpty()) {
+            throw new RuntimeException("UserID doesn't exist");
+        }
+
+        // If startDate or endDate is not provided, use default values
+        LocalDateTime startDateTime = startDate.orElse(LocalDate.of(2020, 1, 1)).atStartOfDay();
+        LocalDateTime endDateTime = endDate.orElse(LocalDate.now().plusYears(100)).atTime(23, 59, 59, 999999999);
+
+        // Convert LocalDateTime to Date
+        Date start = Date.from(startDateTime.atZone(ZoneId.systemDefault()).toInstant());
+        Date end = Date.from(endDateTime.atZone(ZoneId.systemDefault()).toInstant());
+
+        List<Income> incomes = incomeRepository.findByUserIdAndReceivedDateBetween(userId, start, end);
+
+        // Apply the source, receivedThrough, and from filters if they are present
+        Stream<Income> filteredIncomes = incomes.stream();
+        if (source.isPresent()) {
+            filteredIncomes = filteredIncomes.filter(income -> income.getSource().equalsIgnoreCase(source.get()));
+        }
+        if (receivedThrough.isPresent()) {
+            filteredIncomes = filteredIncomes
+                    .filter(income -> income.getReceivedThrough().equalsIgnoreCase(receivedThrough.get()));
+        }
+        if (from.isPresent()) {
+            filteredIncomes = filteredIncomes.filter(income -> income.getFrom().equalsIgnoreCase(from.get()));
+        }
+
+        return filteredIncomes.mapToDouble(Income::getAmount).sum();
     }
 
 }

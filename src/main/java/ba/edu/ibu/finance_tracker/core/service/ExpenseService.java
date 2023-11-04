@@ -184,7 +184,8 @@ public class ExpenseService {
             throw new RuntimeException("UserID doesn't exist");
         }
 
-        // If startDate or endDate is not provided, use default values
+        // If startDate or endDate is not provided, use default values aka. from 2020 to
+        // 2120
         LocalDateTime startDateTime = startDate.orElse(LocalDate.of(2020, 1, 1)).atStartOfDay();
         LocalDateTime endDateTime = endDate.orElse(LocalDate.now().plusYears(100)).atTime(23, 59, 59, 999999999);
 
@@ -207,7 +208,9 @@ public class ExpenseService {
         return filteredExpenses.mapToDouble(Expense::getAmount).sum();
     }
 
-    // helper methods used in createExpense()
+    // ! =======================================! //
+    // ! HELPER METHODS USED IN createExpense() ! //
+    // ! =======================================! //
 
     private void handleCashExpense(User user, double expenseAmount) {
         double totalCreditCardBalance = creditCardService.getTotalCreditCardBalance(user.getId()); // Get the total
@@ -231,11 +234,11 @@ public class ExpenseService {
 
     private double deductFromCreditCards(String userId, double remainingExpense) {
         List<CreditCard> cards = creditCardRepository.findAllByUserId(userId);
-        double totalDeducted = 0; // Track the total amount deducted from credit cards
+        double totalDeducted = 0;
 
         for (CreditCard card : cards) {
             if (remainingExpense <= 0)
-                break; // Exit early if there's no expense left
+                break;
 
             double availableBalance = card.getBalance();
             double deduction = Math.min(remainingExpense, availableBalance);
