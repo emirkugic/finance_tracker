@@ -7,6 +7,7 @@ import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.PasswordUpdateRequestDTO;
 import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.UserCreateRequestDTO;
 import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.UserDTO;
 import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.UserSearchResultDTO;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import java.util.List;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/users")
+@SecurityRequirement(name = "JWT Security")
 public class UserController {
 
     private final UserService userService;

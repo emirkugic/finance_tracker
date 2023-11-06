@@ -1,5 +1,7 @@
 package ba.edu.ibu.finance_tracker.rest.dto.UserDTO;
 
+import ba.edu.ibu.finance_tracker.core.model.enums.UserType;
+
 public class UserCreateRequestDTO {
 
     private String name;
@@ -8,6 +10,7 @@ public class UserCreateRequestDTO {
     private String password;
     private double balance;
     private String parentId;
+    private UserType userType;
 
     public String getName() {
         return name;
@@ -55,6 +58,14 @@ public class UserCreateRequestDTO {
 
     public void setParentId(String parentId) {
         this.parentId = parentId;
+    }
+
+    public UserType getUserType() {
+        return userType;
+    }
+
+    public void setUserType(UserType userType) {
+        this.userType = userType;
     }
 
 }

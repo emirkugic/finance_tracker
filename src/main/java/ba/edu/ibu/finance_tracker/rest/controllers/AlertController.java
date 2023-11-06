@@ -1,5 +1,6 @@
 package ba.edu.ibu.finance_tracker.rest.controllers;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import ba.edu.ibu.finance_tracker.core.model.Alert;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/alerts")
+@PreAuthorize("hasAuthority('ADMIN')")
 public class AlertController {
 
     private final AlertService alertService;

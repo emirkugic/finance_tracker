@@ -9,6 +9,9 @@ import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.UserCreateRequestDTO;
 import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.UserDTO;
 import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.UserSearchResultDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +37,19 @@ public class UserService {
         return mailgunSender.send(users, message);
 
     }
+
+    // security
+    public UserDetailsService userDetailsService() {
+        return new UserDetailsService() {
+            @Override
+            public UserDetails loadUserByUsername(String username) {
+                return userRepository.findByEmail(username)
+                        .orElseThrow(() -> new UsernameNotFoundException("User not found."));
+            }
+        };
+    }
+
+    // CRUD and my own methods
 
     public UserDTO createUser(UserCreateRequestDTO userRequest) {
         Optional<User> existingUser = userRepository.findByEmail(userRequest.getEmail());

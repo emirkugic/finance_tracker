@@ -9,6 +9,10 @@ swagger:
 mailsender:
   default: "sendgrid"
 
+security:
+  jwt:
+    secret: "mXLjT3Gm4skNsCdntWodbHPb1GqY35fGVaisLwImIp8cLZP7W6"
+
 spring:
   data:
     mongodb:
