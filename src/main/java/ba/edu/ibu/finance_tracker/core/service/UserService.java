@@ -74,7 +74,7 @@ public class UserService {
         user.setEmail(newEmail);
         User savedUser = userRepository.save(user);
 
-        return new EmailUpdateResponseDTO(savedUser.getId(), savedUser.getEmail());
+        return new EmailUpdateResponseDTO(savedUser.getId(), savedUser.getUsername());
     }
 
     public boolean updateUserPassword(PasswordUpdateRequestDTO request) {
@@ -142,7 +142,7 @@ public class UserService {
         return userRepository.findByNameAndSurnameLike(name, surname)
                 .stream()
                 .map(user -> new UserSearchResultDTO(
-                        user.getId(), user.getName(), user.getSurname(), user.getEmail()))
+                        user.getId(), user.getName(), user.getSurname(), user.getUsername()))
                 .collect(Collectors.toList());
     }
 
