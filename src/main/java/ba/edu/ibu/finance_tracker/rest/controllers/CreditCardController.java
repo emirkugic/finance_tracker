@@ -52,4 +52,9 @@ public class CreditCardController {
     public double getCreditCardBalance(@PathVariable String userId) {
         return creditCardService.getTotalCreditCardBalance(userId);
     }
+
+    @GetMapping("getCardName/{cardId}")
+    public String getCardName(@PathVariable String cardId) {
+        return creditCardService.getCardNameByCardId(cardId);
+    }
 }

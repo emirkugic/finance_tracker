@@ -66,6 +66,12 @@ public class CreditCardService {
         return creditCardRepository.findAll();
     }
 
+    public String getCardNameByCardId(String cardId) {
+        CreditCard card = creditCardRepository.findById(cardId)
+                .orElseThrow(() -> new RuntimeException("CreditCard not found"));
+        return card.getCardName();
+    }
+
     public List<CreditCard> getCreditCardsByUserId(String userId) {
         return creditCardRepository.findAllByUserId(userId);
     }

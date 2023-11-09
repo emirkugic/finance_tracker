@@ -12,9 +12,11 @@ import ba.edu.ibu.finance_tracker.core.model.Income;
 import ba.edu.ibu.finance_tracker.core.service.IncomeService;
 import ba.edu.ibu.finance_tracker.rest.dto.IncomeDTO.IncomeCreateRequestDTO;
 import ba.edu.ibu.finance_tracker.rest.dto.IncomeDTO.UpdateIncomeAmountDTO;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @RestController
 @RequestMapping("/api/incomes")
+@SecurityRequirement(name = "JWT Security")
 public class IncomeController {
 
     private final IncomeService incomeService;
