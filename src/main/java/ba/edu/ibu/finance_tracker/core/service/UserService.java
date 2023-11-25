@@ -51,6 +51,10 @@ public class UserService {
 
     // CRUD and my own methods
 
+    public User createUser(User user) { // this is used in UserServiceTest (bc of Mockito)
+        return userRepository.save(user);
+    }
+
     public UserDTO createUser(UserCreateRequestDTO userRequest) {
         Optional<User> existingUser = userRepository.findByEmail(userRequest.getEmail());
         if (existingUser.isPresent()) {
@@ -120,6 +124,17 @@ public class UserService {
         } else {
             throw new RuntimeException("User not found");
         }
+    }
+
+    public List<User> getAllChildrenByParentId(String parentId) { // this is used in UserServiceTest (bc of Mockito and
+                                                                  // UserDTO)
+        Optional<User> parent = userRepository.findById(parentId);
+
+        if (parent.isEmpty()) {
+            throw new RuntimeException("Parent not found");
+        }
+
+        return userRepository.findAllByParentId(parentId);
     }
 
     public List<UserDTO> getChildrenByParentId(String parentId) {

@@ -22,6 +22,21 @@ public class User implements UserDetails {
     private double balance;
     private UserType userType;
 
+    public User() {
+    }
+
+    public User(String id, String name, String surname, String email, String password, double balance,
+            UserType userType, String parentId) {
+        this.id = id;
+        this.name = name;
+        this.surname = surname;
+        this.email = email;
+        this.password = password;
+        this.balance = balance;
+        this.userType = userType;
+        this.parentId = parentId;
+    }
+
     public UserType getUserType() {
         return userType;
     }
