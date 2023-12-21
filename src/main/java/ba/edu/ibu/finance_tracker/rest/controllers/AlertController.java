@@ -1,16 +1,19 @@
 package ba.edu.ibu.finance_tracker.rest.controllers;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import ba.edu.ibu.finance_tracker.core.model.Alert;
 import ba.edu.ibu.finance_tracker.core.service.AlertService;
 import ba.edu.ibu.finance_tracker.rest.dto.AlertDTO.AlertCreateRequestDTO;
 import ba.edu.ibu.finance_tracker.rest.dto.AlertDTO.AlertUpdateRequestDTO;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/alerts")
+@SecurityRequirement(name = "JWT Security")
 public class AlertController {
 
     private final AlertService alertService;
@@ -24,6 +27,7 @@ public class AlertController {
         return alertService.createAlert(alertRequest);
     }
 
+    @PreAuthorize("hasAuthority('USER')")
     @GetMapping
     public List<Alert> getAllAlerts() {
         return alertService.getAllAlerts();

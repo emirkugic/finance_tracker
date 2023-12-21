@@ -1,13 +1,16 @@
 configuration:
-
-swagger:
-  app: "FInance Management System"
-  description: "A simple system built with Spring Boot"
-  developer: "Emir Kugic"
-  email: "emir.kugic@ibu.edu.ba"
+  swagger:
+    app: "Finance Management System"
+    description: "A simple system built with Spring Boot"
+    developer: "Emir Kugic"
+    email: "emir.kugic@ibu.edu.ba"
 
 mailsender:
   default: "sendgrid"
+
+security:
+  jwt:
+    secret: "mXLjT3Gm4skNsCdntWodbHPb1GqY35fGVaisLwImIp8cLZP7W6"
 
 spring:
   data:

@@ -1,7 +1,10 @@
 package ba.edu.ibu.finance_tracker.rest.controllers;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,9 +12,11 @@ import ba.edu.ibu.finance_tracker.core.model.Income;
 import ba.edu.ibu.finance_tracker.core.service.IncomeService;
 import ba.edu.ibu.finance_tracker.rest.dto.IncomeDTO.IncomeCreateRequestDTO;
 import ba.edu.ibu.finance_tracker.rest.dto.IncomeDTO.UpdateIncomeAmountDTO;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @RestController
 @RequestMapping("/api/incomes")
+@SecurityRequirement(name = "JWT Security")
 public class IncomeController {
 
     private final IncomeService incomeService;
@@ -71,6 +76,39 @@ public class IncomeController {
     public List<Income> getAllIncomesByDate(@RequestParam String userId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         return incomeService.getAllIncomesByDate(userId, date);
+    }
+
+    @GetMapping("/getBySource")
+    public List<Income> getBySource(@RequestParam String userId, @RequestParam String source) {
+        return incomeService.getAllBySource(userId, source);
+    }
+
+    @GetMapping("/getByReceivedThrough")
+    public List<Income> getByReceivedThrough(@RequestParam String userId, @RequestParam String receivedThrough) {
+        return incomeService.getAllByReceivedThrough(userId, receivedThrough);
+    }
+
+    @GetMapping("/getByFrom")
+    public List<Income> getByFrom(@RequestParam String userId, @RequestParam String from) {
+        return incomeService.getAllByFrom(userId, from);
+    }
+
+    @GetMapping("/amountSumBySourceOrReceivedThroughOrFrom")
+    public double getAmountSumBySourceOrReceivedThroughOrFrom(
+            @RequestParam String userId,
+            @RequestParam Optional<String> source,
+            @RequestParam Optional<String> receivedThrough,
+            @RequestParam Optional<String> from,
+            @RequestParam Optional<String> startDate,
+            @RequestParam Optional<String> endDate) {
+
+        LocalDate start = startDate.map(date -> LocalDate.parse(date, DateTimeFormatter.ISO_DATE))
+                .orElse(LocalDate.of(2020, 1, 1));
+        LocalDate end = endDate.map(date -> LocalDate.parse(date, DateTimeFormatter.ISO_DATE))
+                .orElse(LocalDate.now());
+
+        return incomeService.getSumIncomeByCriteriaAndDateRange(userId, source, receivedThrough, from,
+                Optional.of(start), Optional.of(end));
     }
 
 }

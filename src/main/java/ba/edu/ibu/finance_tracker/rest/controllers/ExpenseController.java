@@ -2,6 +2,8 @@ package ba.edu.ibu.finance_tracker.rest.controllers;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
+import java.time.format.DateTimeFormatter;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -32,16 +34,7 @@ public class ExpenseController {
 
     @PostMapping
     public ResponseEntity<String> createExpense(@RequestBody ExpenseCreateRequestDTO expenseRequest) {
-        Expense newExpense = new Expense();
-        newExpense.setUserId(expenseRequest.getUserId());
-        newExpense.setAmount(expenseRequest.getAmount());
-        newExpense.setCategory(expenseRequest.getCategory());
-        newExpense.setSource(expenseRequest.getSource());
-        newExpense.setExpenseDate(expenseRequest.getExpenseDate());
-        newExpense.setRecipientChildId(expenseRequest.getRecipientChildId());
-
-        String response = expenseService.createExpense(newExpense);
-
+        String response = expenseService.createExpense(expenseRequest);
         return ResponseEntity.ok(response);
     }
 
@@ -66,12 +59,6 @@ public class ExpenseController {
         return expenseService.getAllExpensesByUserId(userId);
     }
 
-    // @GetMapping("/parent/{parentId}")
-    // public List<Expense> getAllExpensesByParentId(@PathVariable String parentId)
-    // {
-    // return expenseService.getAllExpensesByParentId(parentId);
-    // }
-
     @PostMapping("/transfer/{parentId}/{childId}")
     public Expense transferToChild(@PathVariable String parentId, @PathVariable String childId,
             @RequestBody double amount) {
@@ -89,6 +76,33 @@ public class ExpenseController {
     public List<Expense> getAllExpenseByDate(@RequestParam String userId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         return expenseService.getAllExpensesByDate(userId, date);
+    }
+
+    @GetMapping("/getByCategory")
+    public List<Expense> getAllExpenseByCategory(@RequestParam String userId, @RequestParam String category) {
+        return expenseService.getAllExpensesByCategory(userId, category);
+    }
+
+    @GetMapping("/getBySource")
+    public List<Expense> getAllBySource(@RequestParam String userId, @RequestParam String source) {
+        return expenseService.getExpensesBySource(userId, source);
+    }
+
+    @GetMapping("/totalAmountByCategoryOrSource")
+    public double getSumByCategoryOrSourceAndDateRange(
+            @RequestParam String userId,
+            @RequestParam Optional<String> category,
+            @RequestParam Optional<String> source,
+            // yyyy-MM-dd format
+            @RequestParam Optional<String> startDate,
+            @RequestParam Optional<String> endDate) {
+
+        LocalDate start = startDate.map(date -> LocalDate.parse(date, DateTimeFormatter.ISO_DATE))
+                .orElse(LocalDate.of(2020, 1, 1));
+        LocalDate end = endDate.map(date -> LocalDate.parse(date, DateTimeFormatter.ISO_DATE)).orElse(LocalDate.now());
+
+        return expenseService.getSumAmountByCategoryOrSourceAndDateRange(userId, category, source, Optional.of(start),
+                Optional.of(end));
     }
 
 }

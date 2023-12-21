@@ -2,13 +2,19 @@ package ba.edu.ibu.finance_tracker.core.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.springframework.stereotype.Service;
+
+import ba.edu.ibu.finance_tracker.core.model.CreditCard;
 import ba.edu.ibu.finance_tracker.core.model.Income;
 import ba.edu.ibu.finance_tracker.core.model.User;
+import ba.edu.ibu.finance_tracker.core.repository.CreditCardRepository;
 import ba.edu.ibu.finance_tracker.core.repository.IncomeRepository;
 import ba.edu.ibu.finance_tracker.core.repository.UserRepository;
 import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.UserDTO;
@@ -19,11 +25,17 @@ public class IncomeService {
     private final IncomeRepository incomeRepository;
     private final UserService userService;
     private final UserRepository userRepository;
+    private final CreditCardRepository creditCardRepository;
+    private final CreditCardService creditCardService;
 
-    public IncomeService(IncomeRepository incomeRepository, UserService userService, UserRepository userRepository) {
+    public IncomeService(IncomeRepository incomeRepository, UserService userService, UserRepository userRepository,
+            CreditCardRepository creditCardRepository, CreditCardService creditCardService) {
         this.incomeRepository = incomeRepository;
         this.userService = userService;
         this.userRepository = userRepository;
+        this.creditCardRepository = creditCardRepository;
+        this.creditCardService = creditCardService;
+
     }
 
     public Income createIncome(Income income) {
@@ -33,12 +45,22 @@ public class IncomeService {
         }
 
         User user = userService.getUserById(income.getUserId());
-        user.setBalance(user.getBalance() + income.getAmount());
-        userService.updateUserBalance(user.getId(), user.getBalance());
 
         if (income.getReceivedDate() == null) {
             income.setReceivedDate(Date.from(LocalDateTime.now().atZone(java.time.ZoneId.systemDefault()).toInstant()));
 
+        }
+
+        if ("cash".equalsIgnoreCase(income.getReceivedThrough())) {
+            user.setBalance(user.getBalance() + income.getAmount());
+            userService.updateUserBalance(user.getId(), user.getBalance());
+        } else {
+            user.setBalance(user.getBalance() + income.getAmount());
+            userService.updateUserBalance(user.getId(), user.getBalance());
+            CreditCard card = creditCardRepository.findById(income.getReceivedThrough())
+                    .orElseThrow(() -> new RuntimeException("CreditCard not found"));
+            card.setBalance(card.getBalance() + income.getAmount());
+            creditCardService.updateCardBalance(card.getId(), card.getBalance());
         }
         return incomeRepository.save(income);
     }
@@ -111,6 +133,72 @@ public class IncomeService {
         LocalDateTime endOfDay = startOfDay.plusDays(1).minusNanos(1);
 
         return incomeRepository.findByUserIdAndReceivedDateBetween(userId, startOfDay, endOfDay);
+    }
+
+    public List<Income> getAllBySource(String userId, String source) {
+        Optional<User> existingUser = userRepository.findById(userId);
+        if (existingUser.isEmpty()) {
+            throw new RuntimeException("UserID doesn't exist");
+        }
+
+        return incomeRepository.findByUserIdAndSourceIgnoreCase(userId, source);
+    }
+
+    public List<Income> getAllByReceivedThrough(String userId, String receivedThrough) {
+        Optional<User> existingUser = userRepository.findById(userId);
+        if (existingUser.isEmpty()) {
+            throw new RuntimeException("UserID doesn't exist");
+        }
+
+        return incomeRepository.findByUserIdAndReceivedThroughIgnoreCase(userId, receivedThrough);
+    }
+
+    public List<Income> getAllByFrom(String userId, String from) {
+        Optional<User> existingUser = userRepository.findById(userId);
+        if (existingUser.isEmpty()) {
+            throw new RuntimeException("UserID doesn't exist");
+        }
+
+        return incomeRepository.findByUserIdAndFromIgnoreCase(userId, from);
+    }
+
+    public double getSumIncomeByCriteriaAndDateRange(
+            String userId,
+            Optional<String> source,
+            Optional<String> receivedThrough,
+            Optional<String> from,
+            Optional<LocalDate> startDate,
+            Optional<LocalDate> endDate) {
+
+        Optional<User> existingUser = userRepository.findById(userId);
+        if (existingUser.isEmpty()) {
+            throw new RuntimeException("UserID doesn't exist");
+        }
+
+        // If startDate or endDate is not provided, use default values
+        LocalDateTime startDateTime = startDate.orElse(LocalDate.of(2020, 1, 1)).atStartOfDay();
+        LocalDateTime endDateTime = endDate.orElse(LocalDate.now().plusYears(100)).atTime(23, 59, 59, 999999999);
+
+        // Convert LocalDateTime to Date
+        Date start = Date.from(startDateTime.atZone(ZoneId.systemDefault()).toInstant());
+        Date end = Date.from(endDateTime.atZone(ZoneId.systemDefault()).toInstant());
+
+        List<Income> incomes = incomeRepository.findByUserIdAndReceivedDateBetween(userId, start, end);
+
+        // Apply the source, receivedThrough, and from filters if they are present
+        Stream<Income> filteredIncomes = incomes.stream();
+        if (source.isPresent()) {
+            filteredIncomes = filteredIncomes.filter(income -> income.getSource().equalsIgnoreCase(source.get()));
+        }
+        if (receivedThrough.isPresent()) {
+            filteredIncomes = filteredIncomes
+                    .filter(income -> income.getReceivedThrough().equalsIgnoreCase(receivedThrough.get()));
+        }
+        if (from.isPresent()) {
+            filteredIncomes = filteredIncomes.filter(income -> income.getFrom().equalsIgnoreCase(from.get()));
+        }
+
+        return filteredIncomes.mapToDouble(Income::getAmount).sum();
     }
 
 }

@@ -9,6 +9,9 @@ import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.UserCreateRequestDTO;
 import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.UserDTO;
 import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.UserSearchResultDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +36,23 @@ public class UserService {
 
         return mailgunSender.send(users, message);
 
+    }
+
+    // security
+    public UserDetailsService userDetailsService() {
+        return new UserDetailsService() {
+            @Override
+            public UserDetails loadUserByUsername(String username) {
+                return userRepository.findByEmail(username)
+                        .orElseThrow(() -> new UsernameNotFoundException("User not found."));
+            }
+        };
+    }
+
+    // CRUD and my own methods
+
+    public User createUser(User user) { // this is used in UserServiceTest (bc of Mockito)
+        return userRepository.save(user);
     }
 
     public UserDTO createUser(UserCreateRequestDTO userRequest) {
@@ -74,7 +94,7 @@ public class UserService {
         user.setEmail(newEmail);
         User savedUser = userRepository.save(user);
 
-        return new EmailUpdateResponseDTO(savedUser.getId(), savedUser.getEmail());
+        return new EmailUpdateResponseDTO(savedUser.getId(), savedUser.getUsername());
     }
 
     public boolean updateUserPassword(PasswordUpdateRequestDTO request) {
@@ -104,6 +124,17 @@ public class UserService {
         } else {
             throw new RuntimeException("User not found");
         }
+    }
+
+    public List<User> getAllChildrenByParentId(String parentId) { // this is used in UserServiceTest (bc of Mockito and
+                                                                  // UserDTO)
+        Optional<User> parent = userRepository.findById(parentId);
+
+        if (parent.isEmpty()) {
+            throw new RuntimeException("Parent not found");
+        }
+
+        return userRepository.findAllByParentId(parentId);
     }
 
     public List<UserDTO> getChildrenByParentId(String parentId) {
@@ -142,7 +173,7 @@ public class UserService {
         return userRepository.findByNameAndSurnameLike(name, surname)
                 .stream()
                 .map(user -> new UserSearchResultDTO(
-                        user.getId(), user.getName(), user.getSurname(), user.getEmail()))
+                        user.getId(), user.getName(), user.getSurname(), user.getUsername()))
                 .collect(Collectors.toList());
     }
 

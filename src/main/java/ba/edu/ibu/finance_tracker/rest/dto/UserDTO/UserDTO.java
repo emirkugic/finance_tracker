@@ -14,7 +14,7 @@ public class UserDTO {
         this.id = user.getId();
         this.name = user.getName();
         this.surname = user.getSurname();
-        this.email = user.getEmail();
+        this.email = user.getUsername();
         this.balance = user.getBalance();
     }
 
