@@ -187,4 +187,10 @@ public class UserService {
         return user.get().getBalance();
     }
 
+    public String getUserNameAndSurnameById(String id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return user.getName() + " " + user.getSurname();
+    }
+
 }

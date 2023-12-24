@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -104,6 +105,11 @@ public class UserController {
     @GetMapping("/send-to-all")
     public String sendEmailToAllUsers(@RequestParam String message) {
         return userService.sendEmailToAllUsers(message);
+    }
+
+    @GetMapping("/getNameAndSurnameById")
+    public String getNameAndSurname(@RequestParam String id) {
+        return userService.getUserNameAndSurnameById(id);
     }
 
 }
