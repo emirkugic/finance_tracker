@@ -1,6 +1,7 @@
 package ba.edu.ibu.finance_tracker.rest.controllers;
 
 import ba.edu.ibu.finance_tracker.core.model.User;
+import ba.edu.ibu.finance_tracker.core.service.AuthService;
 import ba.edu.ibu.finance_tracker.core.service.UserService;
 import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.EmailUpdateResponseDTO;
 import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.NameUpdateRequestDTO;
@@ -30,9 +31,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     private final UserService userService;
+    private final AuthService authService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, AuthService authService) {
         this.userService = userService;
+        this.authService = authService;
     }
 
     @PostMapping
@@ -75,7 +78,7 @@ public class UserController {
     @PutMapping("/password/update")
     public ResponseEntity<String> updatePassword(@RequestBody PasswordUpdateRequestDTO passwordUpdateRequest) {
         try {
-            userService.updateUserPassword(passwordUpdateRequest);
+            authService.updateUserPassword(passwordUpdateRequest);
             return new ResponseEntity<>("Password updated successfully", HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

@@ -4,6 +4,7 @@ import ba.edu.ibu.finance_tracker.core.model.User;
 import ba.edu.ibu.finance_tracker.core.repository.UserRepository;
 import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.LoginDTO;
 import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.LoginRequestDTO;
+import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.PasswordUpdateRequestDTO;
 import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.UserDTO;
 import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.UserRequestDTO;
 
@@ -50,4 +51,21 @@ public class AuthService {
         return new LoginDTO(jwt);
     }
 
+    public boolean updateUserPassword(PasswordUpdateRequestDTO request) {
+        User user = userRepository.findById(request.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+            throw new RuntimeException("Old password does not match");
+        }
+
+        if (passwordEncoder.matches(request.getNewPassword(), user.getPassword())) {
+            throw new RuntimeException("New password cannot be the same as the old password");
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+
+        return true;
+    }
 }

@@ -106,23 +106,24 @@ public class UserService {
         return new EmailUpdateResponseDTO(savedUser.getId(), savedUser.getUsername());
     }
 
-    public boolean updateUserPassword(PasswordUpdateRequestDTO request) {
-        User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    // public boolean updateUserPassword(PasswordUpdateRequestDTO request) {
+    // User user = userRepository.findById(request.getUserId())
+    // .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (!user.getPassword().equals(request.getOldPassword())) {
-            throw new RuntimeException("Old password does not match");
-        }
+    // if (!user.getPassword().equals(request.getOldPassword())) {
+    // throw new RuntimeException("Old password does not match");
+    // }
 
-        if (request.getNewPassword().equals(request.getOldPassword())) {
-            throw new RuntimeException("New password cannot be the same as the old password");
-        }
+    // if (request.getNewPassword().equals(request.getOldPassword())) {
+    // throw new RuntimeException("New password cannot be the same as the old
+    // password");
+    // }
 
-        user.setPassword(request.getNewPassword());
-        userRepository.save(user);
+    // user.setPassword(request.getNewPassword());
+    // userRepository.save(user);
 
-        return true;
-    }
+    // return true;
+    // }
 
     public UserDTO updateUserBalance(String id, double newBalance) {
         Optional<User> user = userRepository.findById(id);
