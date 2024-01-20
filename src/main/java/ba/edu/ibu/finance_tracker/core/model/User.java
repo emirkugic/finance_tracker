@@ -21,12 +21,13 @@ public class User implements UserDetails {
     private String password;
     private double balance;
     private UserType userType = UserType.USER;
+    private String profilePictureUrl = "https://i.imgur.com/X1ESkLG.jpg"; // default profile picture
 
     public User() {
     }
 
     public User(String id, String name, String surname, String email, String password, double balance,
-            UserType userType, String parentId) {
+            UserType userType, String parentId, String profilePictureUrl) {
         this.id = id;
         this.name = name;
         this.surname = surname;
@@ -35,6 +36,7 @@ public class User implements UserDetails {
         this.balance = balance;
         this.userType = userType;
         this.parentId = parentId;
+        this.profilePictureUrl = profilePictureUrl;
     }
 
     public UserType getUserType() {
@@ -102,6 +104,14 @@ public class User implements UserDetails {
 
     public void setBalance(double balance) {
         this.balance = balance;
+    }
+
+    public String getProfilePictureUrl() {
+        return profilePictureUrl;
+    }
+
+    public void setProfilePictureUrl(String profilePicture) {
+        this.profilePictureUrl = profilePicture;
     }
 
     // security
