@@ -20,7 +20,7 @@ public class User implements UserDetails {
     private String email;
     private String password;
     private double balance;
-    private UserType userType;
+    private UserType userType = UserType.USER;
 
     public User() {
     }

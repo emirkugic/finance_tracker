@@ -3,6 +3,7 @@ package ba.edu.ibu.finance_tracker.rest.controllers;
 import ba.edu.ibu.finance_tracker.core.model.User;
 import ba.edu.ibu.finance_tracker.core.service.UserService;
 import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.EmailUpdateResponseDTO;
+import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.NameUpdateRequestDTO;
 import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.PasswordUpdateRequestDTO;
 import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.UserCreateRequestDTO;
 import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.UserDTO;
@@ -38,6 +39,7 @@ public class UserController {
     @PostMapping
     public UserDTO createUser(@RequestBody UserCreateRequestDTO userRequest) {
         return userService.createUser(userRequest);
+
     }
 
     @DeleteMapping("/{id}")
@@ -53,6 +55,17 @@ public class UserController {
     @GetMapping("/{id}")
     public User getById(@PathVariable String id) {
         return userService.getUserById(id);
+    }
+
+    @PutMapping("/{id}/updateName")
+    public ResponseEntity<?> updateUserName(@PathVariable String id,
+            @RequestBody NameUpdateRequestDTO nameUpdateRequest) {
+        try {
+            UserDTO updatedUser = userService.updateUserName(id, nameUpdateRequest);
+            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping("/{id}/email")

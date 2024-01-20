@@ -38,12 +38,26 @@ public class AuthService {
         return new UserDTO(user);
     }
 
+    // public LoginDTO signIn(LoginRequestDTO loginRequestDTO) {
+    // authenticationManager.authenticate(
+    // new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(),
+    // loginRequestDTO.getPassword()));
+    // User user = userRepository.findByEmail(loginRequestDTO.getEmail())
+    // .orElseThrow(() -> new UsernameNotFoundException("This user does not
+    // exist."));
+    // String jwt = jwtService.generateToken(user);
+
+    // return new LoginDTO(jwt);
+    // }
+
     public LoginDTO signIn(LoginRequestDTO loginRequestDTO) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(), loginRequestDTO.getPassword()));
+
         User user = userRepository.findByEmail(loginRequestDTO.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("This user does not exist."));
-        String jwt = jwtService.generateToken(user);
+
+        String jwt = jwtService.generateToken(user, user.getId().toString());
 
         return new LoginDTO(jwt);
     }

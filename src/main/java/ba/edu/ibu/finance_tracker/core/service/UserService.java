@@ -4,6 +4,7 @@ import ba.edu.ibu.finance_tracker.core.api.mailsender.MailSender;
 import ba.edu.ibu.finance_tracker.core.model.User;
 import ba.edu.ibu.finance_tracker.core.repository.UserRepository;
 import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.EmailUpdateResponseDTO;
+import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.NameUpdateRequestDTO;
 import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.PasswordUpdateRequestDTO;
 import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.UserCreateRequestDTO;
 import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.UserDTO;
@@ -86,6 +87,14 @@ public class UserService {
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    public UserDTO updateUserName(String id, NameUpdateRequestDTO nameUpdateRequest) {
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+        user.setName(nameUpdateRequest.getName());
+        user.setSurname(nameUpdateRequest.getSurname());
+        userRepository.save(user);
+        return new UserDTO(user);
     }
 
     public EmailUpdateResponseDTO updateUserEmail(String id, String newEmail) {
