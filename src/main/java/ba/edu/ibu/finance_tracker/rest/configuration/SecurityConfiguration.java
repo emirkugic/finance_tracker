@@ -34,13 +34,13 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/api/users/**").permitAll()
+                        .requestMatchers("/api/users/**").authenticated()
                         // .requestMatchers("/api/repeating-expenses/**").authenticated()
-                        .requestMatchers("/api/incomes/**").permitAll()
-                        .requestMatchers("/api/expenses/**").permitAll()
-                        .requestMatchers("/api/credit-cards/**").permitAll()
+                        .requestMatchers("/api/incomes/**").authenticated()
+                        .requestMatchers("/api/expenses/**").authenticated()
+                        .requestMatchers("/api/credit-cards/**").authenticated()
                         .requestMatchers("/api/alerts/**").authenticated()
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/auth/**").authenticated()
 
                         .anyRequest().permitAll())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
