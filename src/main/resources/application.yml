@@ -22,7 +22,7 @@ security:
 spring:
   data:
     mongodb:
-      uri: mongodb+srv://emirkugic:emirkugic@web.q0bnkd3.mongodb.net/?retryWrites=true&w=majority
+      uri: mongodb+srv://emirkugic:emirkugic@web.dansdge.mongodb.net/?retryWrites=true&w=majority
       database: finance_tracker
 # imgur:
 #   client:
