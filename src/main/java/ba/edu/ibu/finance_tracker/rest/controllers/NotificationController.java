@@ -26,7 +26,7 @@ public class NotificationController {
     }
 
     @RequestMapping(path = "/broadcast", method = RequestMethod.POST)
-    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
+    // @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public ResponseEntity<Void> sendBroadcastMessage(@RequestBody MessageDTO message) throws IOException {
         System.out.println("The message is: " + message.getMessage());
         notificationService.broadcastMessage(message.getMessage());
@@ -34,7 +34,7 @@ public class NotificationController {
     }
 
     @RequestMapping(path = "/send-to/{userId}", method = RequestMethod.POST)
-    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
+    // @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public ResponseEntity<Void> sendChatMessage(@PathVariable String userId, @RequestBody MessageDTO message)
             throws IOException {
         System.out.println("The message is: " + message.getMessage());

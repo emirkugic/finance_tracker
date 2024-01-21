@@ -40,6 +40,7 @@ public class UserController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public UserDTO createUser(@RequestBody UserCreateRequestDTO userRequest) {
         return userService.createUser(userRequest);
 

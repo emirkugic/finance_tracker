@@ -26,7 +26,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @RestController
 @RequestMapping("/api/expenses")
-@SecurityRequirement(name = "JWT Security")
+// @SecurityRequirement(name = "JWT Security")
 public class ExpenseController {
 
     final private ExpenseService expenseService;
@@ -36,46 +36,46 @@ public class ExpenseController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
+    // @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public ResponseEntity<String> createExpense(@RequestBody ExpenseCreateRequestDTO expenseRequest) {
         String response = expenseService.createExpense(expenseRequest);
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
+    // @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public void deleteExpense(@PathVariable String id) {
         expenseService.deleteExpense(id);
     }
 
     @PutMapping("/updateAmount")
-    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
+    // @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public ResponseEntity<Boolean> updateExpenseAmount(@RequestBody UpdateExpenseAmountDTO requestDTO) {
         boolean isSuccess = expenseService.updateExpenseAmount(requestDTO.getId(), requestDTO.getNewAmount());
         return ResponseEntity.ok(isSuccess);
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
+    // @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     List<Expense> getAllExpenses() {
         return expenseService.getAllExpenses();
     }
 
     @GetMapping("user/{userId}")
-    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
+    // @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public List<Expense> getExpensesByUserId(@PathVariable String userId) {
         return expenseService.getAllExpensesByUserId(userId);
     }
 
     @PostMapping("/transfer/{parentId}/{childId}")
-    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
+    // @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public Expense transferToChild(@PathVariable String parentId, @PathVariable String childId,
             @RequestBody double amount) {
         return expenseService.transferToChild(parentId, childId, amount);
     }
 
     @GetMapping("/getBetweenDates")
-    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
+    // @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public List<Expense> getAllExpenseBetweenDates(@RequestParam String userId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
@@ -83,26 +83,26 @@ public class ExpenseController {
     }
 
     @GetMapping("/getByDate")
-    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
+    // @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public List<Expense> getAllExpenseByDate(@RequestParam String userId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         return expenseService.getAllExpensesByDate(userId, date);
     }
 
     @GetMapping("/getByCategory")
-    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
+    // @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public List<Expense> getAllExpenseByCategory(@RequestParam String userId, @RequestParam String category) {
         return expenseService.getAllExpensesByCategory(userId, category);
     }
 
     @GetMapping("/getBySource")
-    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
+    // @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public List<Expense> getAllBySource(@RequestParam String userId, @RequestParam String source) {
         return expenseService.getExpensesBySource(userId, source);
     }
 
     @GetMapping("/totalAmountByCategoryOrSource")
-    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
+    // @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public double getSumByCategoryOrSourceAndDateRange(
             @RequestParam String userId,
             @RequestParam Optional<String> category,
