@@ -1,8 +1,10 @@
 package ba.edu.ibu.finance_tracker.rest.controllers;
 
 import ba.edu.ibu.finance_tracker.core.model.User;
+import ba.edu.ibu.finance_tracker.core.service.AuthService;
 import ba.edu.ibu.finance_tracker.core.service.UserService;
 import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.EmailUpdateResponseDTO;
+import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.NameUpdateRequestDTO;
 import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.PasswordUpdateRequestDTO;
 import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.UserCreateRequestDTO;
 import ba.edu.ibu.finance_tracker.rest.dto.UserDTO.UserDTO;
@@ -29,14 +31,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     private final UserService userService;
+    private final AuthService authService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, AuthService authService) {
         this.userService = userService;
+        this.authService = authService;
     }
 
     @PostMapping
     public UserDTO createUser(@RequestBody UserCreateRequestDTO userRequest) {
         return userService.createUser(userRequest);
+
     }
 
     @DeleteMapping("/{id}")
@@ -54,6 +59,17 @@ public class UserController {
         return userService.getUserById(id);
     }
 
+    @PutMapping("/{id}/updateName")
+    public ResponseEntity<?> updateUserName(@PathVariable String id,
+            @RequestBody NameUpdateRequestDTO nameUpdateRequest) {
+        try {
+            UserDTO updatedUser = userService.updateUserName(id, nameUpdateRequest);
+            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @PutMapping("/{id}/email")
     public EmailUpdateResponseDTO updateEmail(@PathVariable String id, @RequestBody String newEmail) {
         return userService.updateUserEmail(id, newEmail);
@@ -62,7 +78,7 @@ public class UserController {
     @PutMapping("/password/update")
     public ResponseEntity<String> updatePassword(@RequestBody PasswordUpdateRequestDTO passwordUpdateRequest) {
         try {
-            userService.updateUserPassword(passwordUpdateRequest);
+            authService.updateUserPassword(passwordUpdateRequest);
             return new ResponseEntity<>("Password updated successfully", HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -104,6 +120,11 @@ public class UserController {
     @GetMapping("/send-to-all")
     public String sendEmailToAllUsers(@RequestParam String message) {
         return userService.sendEmailToAllUsers(message);
+    }
+
+    @GetMapping("/getNameAndSurnameById")
+    public String getNameAndSurname(@RequestParam String id) {
+        return userService.getUserNameAndSurnameById(id);
     }
 
 }

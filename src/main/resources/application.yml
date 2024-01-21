@@ -23,3 +23,7 @@ spring:
 #     mongodb:
 #       uri: mongodb+srv://emirkugic:emirkugic@library-db.likfgjo.mongodb.net/?retryWrites=true&w=majority
 #       database: finance_tracker
+
+# imgur:
+#   client:
+#     id: "ab0ad10e479e687"
