@@ -35,7 +35,7 @@ public class SecurityConfiguration {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/api/users/**").permitAll()
-                        .requestMatchers("/api/repeating-expenses/**").authenticated()
+                        // .requestMatchers("/api/repeating-expenses/**").authenticated()
                         .requestMatchers("/api/incomes/**").permitAll()
                         .requestMatchers("/api/expenses/**").permitAll()
                         .requestMatchers("/api/credit-cards/**").permitAll()

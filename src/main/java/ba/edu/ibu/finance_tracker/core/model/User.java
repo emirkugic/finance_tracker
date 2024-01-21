@@ -34,7 +34,7 @@ public class User implements UserDetails {
         this.email = email;
         this.password = password;
         this.balance = balance;
-        this.userType = userType;
+        this.userType = userType = UserType.USER;
         this.parentId = parentId;
         this.profilePictureUrl = profilePictureUrl;
     }
