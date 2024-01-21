@@ -18,12 +18,12 @@ security:
 #      host: localhost
 #      port: 27017
 #      database: finance_tracker
-spring:
- data:
-   mongodb:
-     uri: mongodb+srv://emirkugic:emirkugic@library-db.likfgjo.mongodb.net/?retryWrites=true&w=majority
-     database: finance_tracker
 
+spring:
+  data:
+    mongodb:
+      uri: mongodb+srv://emirkugic:emirkugic@web.q0bnkd3.mongodb.net/?retryWrites=true&w=majority
+      database: finance_tracker
 # imgur:
 #   client:
 #     id: "ab0ad10e479e687"

@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ba.edu.ibu.finance_tracker.core.model.Income;
 import ba.edu.ibu.finance_tracker.core.service.IncomeService;
@@ -39,11 +40,13 @@ public class IncomeController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public void deleteIncome(@PathVariable String id) {
         incomeService.deleteIncome(id);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public ResponseEntity<String> updateIncomeAmount(@PathVariable String id,
             @RequestBody UpdateIncomeAmountDTO request) {
         String responseMessage = incomeService.updateIncomeAmount(id, request.getNewAmount());
@@ -51,21 +54,25 @@ public class IncomeController {
     }
 
     @GetMapping("/user/{userId}")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public List<Income> getAllIncomesByUserId(@PathVariable String userId) {
         return incomeService.getAllIncomesByUserId(userId);
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public List<Income> getAllIncomes() {
         return incomeService.getAllIncomes();
     }
 
     @GetMapping("/parent/{parentId}")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public List<Income> getAllIncomesByParentId(@PathVariable String parentId) {
         return incomeService.getAllIncomesByParentId(parentId);
     }
 
     @GetMapping("/getBetweenDates")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public List<Income> getAllIncomesBetweenDates(@RequestParam String userId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
@@ -73,27 +80,32 @@ public class IncomeController {
     }
 
     @GetMapping("/getByDate")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public List<Income> getAllIncomesByDate(@RequestParam String userId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         return incomeService.getAllIncomesByDate(userId, date);
     }
 
     @GetMapping("/getBySource")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public List<Income> getBySource(@RequestParam String userId, @RequestParam String source) {
         return incomeService.getAllBySource(userId, source);
     }
 
     @GetMapping("/getByReceivedThrough")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public List<Income> getByReceivedThrough(@RequestParam String userId, @RequestParam String receivedThrough) {
         return incomeService.getAllByReceivedThrough(userId, receivedThrough);
     }
 
     @GetMapping("/getByFrom")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public List<Income> getByFrom(@RequestParam String userId, @RequestParam String from) {
         return incomeService.getAllByFrom(userId, from);
     }
 
     @GetMapping("/amountSumBySourceOrReceivedThroughOrFrom")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public double getAmountSumBySourceOrReceivedThroughOrFrom(
             @RequestParam String userId,
             @RequestParam Optional<String> source,
