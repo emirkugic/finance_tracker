@@ -3,6 +3,7 @@ package ba.edu.ibu.finance_tracker.rest.websockets;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.*;
+import org.springframework.lang.NonNull;
 
 import ba.edu.ibu.finance_tracker.core.model.User;
 import ba.edu.ibu.finance_tracker.core.service.JwtService;
@@ -25,7 +26,7 @@ public class MainSocketHandler implements WebSocketHandler {
     }
 
     @Override
-    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+    public void afterConnectionEstablished(@NonNull WebSocketSession session) throws Exception {
         User user = getUser(session);
         if (user == null) {
             return;
@@ -37,12 +38,13 @@ public class MainSocketHandler implements WebSocketHandler {
     }
 
     @Override
-    public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
+    public void handleTransportError(@NonNull WebSocketSession session, @NonNull Throwable exception) throws Exception {
         System.out.println("Error happened " + session.getId() + " with reason ### " + exception.getMessage());
     }
 
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) throws Exception {
+    public void afterConnectionClosed(@NonNull WebSocketSession session,
+            @NonNull CloseStatus closeStatus) throws Exception {
         System.out.println(
                 "Connection closed for session " + session.getId() + " with status ### " + closeStatus.getReason());
     }
@@ -53,7 +55,8 @@ public class MainSocketHandler implements WebSocketHandler {
     }
 
     @Override
-    public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
+    public void handleMessage(@NonNull WebSocketSession session,
+            @NonNull WebSocketMessage<?> message) throws Exception {
         String messageReceived = (String) message.getPayload();
         System.out.println("Message received: " + messageReceived);
     }
