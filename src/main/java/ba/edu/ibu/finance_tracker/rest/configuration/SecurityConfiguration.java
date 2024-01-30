@@ -32,16 +32,18 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
+        http
+                .cors() // Enable CORS configuration
+                .and()
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/api/users/**").permitAll()
-                        .requestMatchers("/api/repeating-expenses/**").authenticated()
+                        // .requestMatchers("/api/repeating-expenses/**").authenticated()
                         .requestMatchers("/api/incomes/**").permitAll()
                         .requestMatchers("/api/expenses/**").permitAll()
                         .requestMatchers("/api/credit-cards/**").permitAll()
-                        .requestMatchers("/api/alerts/**").authenticated()
+                        .requestMatchers("/api/alerts/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
-
                         .anyRequest().permitAll())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
